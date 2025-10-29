@@ -96,7 +96,7 @@ describe('sudoku', () => {
     });
 
     it('should have empty cells (zeros) in the puzzle', () => {
-      const { puzzle } = generatePuzzle(45);
+      const { puzzle } = generatePuzzle('medium');
       let emptyCells = 0;
       puzzle.forEach(row => {
         row.forEach(cell => {
@@ -106,9 +106,8 @@ describe('sudoku', () => {
       expect(emptyCells).toBeGreaterThan(0);
     });
 
-    it('should respect difficulty parameter', () => {
-      const difficulty = 30;
-      const { puzzle } = generatePuzzle(difficulty);
+    it('should generate easy puzzle with 30-35 empty cells', () => {
+      const { puzzle } = generatePuzzle('easy');
 
       let emptyCells = 0;
       puzzle.forEach(row => {
@@ -117,21 +116,50 @@ describe('sudoku', () => {
         });
       });
 
-      expect(emptyCells).toBe(difficulty);
+      expect(emptyCells).toBeGreaterThanOrEqual(30);
+      expect(emptyCells).toBeLessThanOrEqual(35);
     });
 
-    it('should clamp difficulty between 20 and 64', () => {
-      const { puzzle: easyPuzzle } = generatePuzzle(10); // Too easy
-      const { puzzle: hardPuzzle } = generatePuzzle(70); // Too hard
+    it('should generate medium puzzle with 40-45 empty cells', () => {
+      const { puzzle } = generatePuzzle('medium');
 
-      let easyEmpty = 0;
-      let hardEmpty = 0;
+      let emptyCells = 0;
+      puzzle.forEach(row => {
+        row.forEach(cell => {
+          if (cell === 0) emptyCells++;
+        });
+      });
 
-      easyPuzzle.forEach(row => row.forEach(cell => { if (cell === 0) easyEmpty++; }));
-      hardPuzzle.forEach(row => row.forEach(cell => { if (cell === 0) hardEmpty++; }));
+      expect(emptyCells).toBeGreaterThanOrEqual(40);
+      expect(emptyCells).toBeLessThanOrEqual(45);
+    });
 
-      expect(easyEmpty).toBe(20);
-      expect(hardEmpty).toBe(64);
+    it('should generate hard puzzle with 50-55 empty cells', () => {
+      const { puzzle } = generatePuzzle('hard');
+
+      let emptyCells = 0;
+      puzzle.forEach(row => {
+        row.forEach(cell => {
+          if (cell === 0) emptyCells++;
+        });
+      });
+
+      expect(emptyCells).toBeGreaterThanOrEqual(50);
+      expect(emptyCells).toBeLessThanOrEqual(55);
+    });
+
+    it('should default to medium difficulty', () => {
+      const { puzzle } = generatePuzzle();
+
+      let emptyCells = 0;
+      puzzle.forEach(row => {
+        row.forEach(cell => {
+          if (cell === 0) emptyCells++;
+        });
+      });
+
+      expect(emptyCells).toBeGreaterThanOrEqual(40);
+      expect(emptyCells).toBeLessThanOrEqual(45);
     });
 
     it('should have puzzle cells that are subset of solution', () => {

@@ -1,5 +1,26 @@
 export type SudokuBoard = number[][];
 
+export type Difficulty = 'easy' | 'medium' | 'hard';
+
+interface DifficultyConfig {
+  min: number;
+  max: number;
+}
+
+const DIFFICULTY_MAP: Record<Difficulty, DifficultyConfig> = {
+  easy: { min: 30, max: 35 },
+  medium: { min: 40, max: 45 },
+  hard: { min: 50, max: 55 },
+};
+
+/**
+ * Get random number of cells to remove based on difficulty
+ */
+function getCellsToRemove(difficulty: Difficulty): number {
+  const config = DIFFICULTY_MAP[difficulty];
+  return Math.floor(Math.random() * (config.max - config.min + 1)) + config.min;
+}
+
 /**
  * Check if a number is valid in a specific position
  */
@@ -101,14 +122,14 @@ export function generateCompleteBoard(): SudokuBoard {
 
 /**
  * Generate a sudoku puzzle by removing numbers from a complete board
- * @param difficulty Number of cells to remove (default: 45 for medium difficulty)
+ * @param difficulty Difficulty level: 'easy', 'medium', or 'hard' (default: 'medium')
  */
-export function generatePuzzle(difficulty: number = 45): { puzzle: SudokuBoard; solution: SudokuBoard } {
+export function generatePuzzle(difficulty: Difficulty = 'medium'): { puzzle: SudokuBoard; solution: SudokuBoard } {
   const solution = generateCompleteBoard();
   const puzzle = copyBoard(solution);
 
-  // Remove random numbers
-  let cellsToRemove = Math.min(Math.max(difficulty, 20), 64); // Clamp between 20 and 64
+  // Get number of cells to remove based on difficulty
+  const cellsToRemove = getCellsToRemove(difficulty);
   const positions: [number, number][] = [];
 
   // Create list of all positions
