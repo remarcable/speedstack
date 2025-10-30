@@ -368,6 +368,11 @@ h1 {
   border: var(--border-width) solid var(--color-border-light);
 }
 
+.instructions ul {
+  list-style-type: disc;
+  padding-left: var(--spacing-lg);
+}
+
 .start-button {
   margin-top: var(--spacing-xl);
   padding: var(--spacing-md) var(--spacing-2xl);
