@@ -1,283 +1,164 @@
 import { useState, useEffect, useCallback } from 'react';
+import { isValidMove } from '../utils/genericSudoku';
 import {
-  generatePuzzle,
-  isValidMove,
-  isBoardComplete,
-  type GridSize,
-  type Board,
-} from '../utils/genericSudoku';
+  TIME_BONUS,
+  TIME_PENALTY,
+  MAX_TIME,
+  POINTS_PER_SIZE_MULTIPLIER,
+  MAX_CELL_SIZE,
+  BOARD_MAX_WIDTH,
+  FEEDBACK_ANIMATION_DURATION,
+} from '../constants/gameConfig';
+import { useTimer } from '../hooks/useTimer';
+import { useGameState } from '../hooks/useGameState';
+import { usePuzzle } from '../hooks/usePuzzle';
+import { GameHeader } from './GameHeader';
+import { GameBoard } from './GameBoard';
+import { NumberPad } from './NumberPad';
+import { GameModals } from './GameModals';
 import '../SpeedStack.css';
 
-const INITIAL_TIME = 30;
-const TIME_BONUS = 8;
-const TIME_PENALTY = 5;
-
 function SpeedStack() {
-  const [hasStarted, setHasStarted] = useState(false);
-  const [currentSize, setCurrentSize] = useState<GridSize>(1);
-  const [puzzle, setPuzzle] = useState<Board>([]);
-  const [solution, setSolution] = useState<Board>([]);
-  const [userBoard, setUserBoard] = useState<Board>([]);
-  const [selectedCell, setSelectedCell] = useState<[number, number] | null>(null);
-  const [selectedNumber, setSelectedNumber] = useState<number | null>(null);
-  const [timeRemaining, setTimeRemaining] = useState(INITIAL_TIME);
-  const [score, setScore] = useState(0);
-  const [completedCount, setCompletedCount] = useState(0);
-  const [isGameOver, setIsGameOver] = useState(false);
   const [feedback, setFeedback] = useState<'correct' | 'incorrect' | null>(null);
-  const [isNewPuzzle, setIsNewPuzzle] = useState(false);
 
-  const getNextSize = (completed: number): GridSize => {
-    if (completed < 3) return 1;
-    if (completed < 6) return 2;
-    if (completed < 9) return 3;
-    if (completed < 12) return 4;
-    if (completed < 14) return 5;
-    if (completed < 16) return 6;
-    if (completed < 18) return 7;
-    if (completed < 20) return 8;
-    return 9;
-  };
+  // Custom hooks
+  const gameState = useGameState();
+  const puzzle = usePuzzle();
+  const timer = useTimer(gameState.hasStarted, gameState.isGameOver, () =>
+    gameState.setIsGameOver(true)
+  );
 
-  const generateNewPuzzle = useCallback((size: GridSize) => {
-    const { puzzle: newPuzzle, solution: newSolution } = generatePuzzle(size);
-    setPuzzle(newPuzzle);
-    setSolution(newSolution);
-    setUserBoard(newPuzzle.map(row => [...row]));
-    setSelectedCell(null);
-    setSelectedNumber(null);
-
-    // Trigger new puzzle animation
-    setIsNewPuzzle(true);
-    setTimeout(() => setIsNewPuzzle(false), 800);
+  // Initialize first puzzle on mount
+  useEffect(() => {
+    puzzle.generateNewPuzzle(1);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const checkCompletion = useCallback((boardToCheck: Board) => {
-    if (isBoardComplete(boardToCheck)) {
-      // Check if the solution is correct
-      let isCorrect = true;
-      for (let i = 0; i < boardToCheck.length; i++) {
-        for (let j = 0; j < boardToCheck[i].length; j++) {
-          if (boardToCheck[i][j] !== solution[i][j]) {
-            isCorrect = false;
-            break;
-          }
-        }
-        if (!isCorrect) break;
-      }
+  // Check for puzzle completion
+  const checkCompletion = useCallback(() => {
+    if (puzzle.checkIfComplete() && puzzle.checkIfCorrect()) {
+      // Calculate points and add time bonus
+      const points = gameState.currentSize * POINTS_PER_SIZE_MULTIPLIER;
+      const newTime = Math.min(timer.timeRemaining + TIME_BONUS, MAX_TIME);
+      timer.setTimeRemaining(newTime);
 
-      if (isCorrect) {
-        // Puzzle completed correctly
-        const newCompleted = completedCount + 1;
-        const newScore = score + currentSize * 10;
-        const newTime = Math.min(timeRemaining + TIME_BONUS, 99);
+      // Progress to next level
+      const nextSize = gameState.completeLevel(points);
+      puzzle.generateNewPuzzle(nextSize);
 
-        setCompletedCount(newCompleted);
-        setScore(newScore);
-        setTimeRemaining(newTime);
-
-        const nextSize = getNextSize(newCompleted);
-        setCurrentSize(nextSize);
-        generateNewPuzzle(nextSize);
-
-        setFeedback('correct');
-        setTimeout(() => setFeedback(null), 500);
-      }
+      setFeedback('correct');
+      setTimeout(() => setFeedback(null), FEEDBACK_ANIMATION_DURATION);
     }
-  }, [solution, completedCount, score, currentSize, timeRemaining, generateNewPuzzle]);
-
-  useEffect(() => {
-    generateNewPuzzle(1);
-  }, [generateNewPuzzle]);
-
-  useEffect(() => {
-    if (!hasStarted || isGameOver) return;
-
-    const timer = setInterval(() => {
-      setTimeRemaining(prev => {
-        if (prev <= 1) {
-          setIsGameOver(true);
-          return 0;
-        }
-        return prev - 1;
-      });
-    }, 1000);
-
-    return () => clearInterval(timer);
-  }, [hasStarted, isGameOver]);
-
-  const handleCellClick = (row: number, col: number) => {
-    if (!hasStarted || isGameOver) return;
-    if (puzzle[row][col] !== 0) return; // Can't change initial clues
-
-    // If a number is already selected, fill the cell
-    if (selectedNumber !== null) {
-      fillCell(row, col, selectedNumber);
-    } else {
-      // Otherwise, just select the cell
-      setSelectedCell([row, col]);
-    }
-  };
+  }, [puzzle, gameState, timer]);
 
   const fillCell = (row: number, col: number, num: number) => {
-    const newBoard = userBoard.map(r => [...r]);
+    const newBoard = puzzle.userBoard.map(r => [...r]);
     newBoard[row][col] = num;
 
-    if (isValidMove(userBoard, row, col, num)) {
-      setUserBoard(newBoard);
+    if (isValidMove(puzzle.userBoard, row, col, num)) {
+      puzzle.updateUserBoard(newBoard);
       setFeedback('correct');
       setTimeout(() => setFeedback(null), 300);
 
-      // Check completion with the new board directly
-      checkCompletion(newBoard);
+      // Check completion
+      checkCompletion();
     } else {
       // Invalid move - penalty
-      setTimeRemaining(prev => Math.max(0, prev - TIME_PENALTY));
+      timer.subtractTime(TIME_PENALTY);
       setFeedback('incorrect');
       setTimeout(() => setFeedback(null), 500);
     }
   };
 
+  const handleCellClick = (row: number, col: number) => {
+    if (!gameState.hasStarted || gameState.isGameOver) return;
+    if (puzzle.puzzle[row][col] !== 0) return; // Can't change initial clues
+
+    // If a number is already selected, fill the cell
+    if (puzzle.selectedNumber !== null) {
+      fillCell(row, col, puzzle.selectedNumber);
+    } else {
+      // Otherwise, just select the cell
+      puzzle.setSelectedCell([row, col]);
+    }
+  };
+
   const handleStartGame = () => {
-    setHasStarted(true);
+    gameState.startGame();
   };
 
   const handleNumberClick = (num: number) => {
-    if (!hasStarted || isGameOver) return;
+    if (!gameState.hasStarted || gameState.isGameOver) return;
 
     // Toggle number selection
-    if (selectedNumber === num) {
-      setSelectedNumber(null);
+    if (puzzle.selectedNumber === num) {
+      puzzle.setSelectedNumber(null);
     } else {
-      setSelectedNumber(num);
+      puzzle.setSelectedNumber(num);
 
       // If a cell is already selected, fill it immediately
-      if (selectedCell) {
-        const [row, col] = selectedCell;
-        if (puzzle[row][col] === 0) {
+      if (puzzle.selectedCell) {
+        const [row, col] = puzzle.selectedCell;
+        if (puzzle.puzzle[row][col] === 0) {
           fillCell(row, col, num);
-          setSelectedCell(null);
+          puzzle.setSelectedCell(null);
         }
       }
     }
   };
 
   const handleRestart = () => {
-    setHasStarted(false);
-    setCurrentSize(1);
-    setScore(0);
-    setCompletedCount(0);
-    setTimeRemaining(INITIAL_TIME);
-    setIsGameOver(false);
-    setSelectedCell(null);
-    setSelectedNumber(null);
+    gameState.resetGame();
+    timer.resetTimer();
+    puzzle.setSelectedCell(null);
+    puzzle.setSelectedNumber(null);
     setFeedback(null);
-    generateNewPuzzle(1);
+    puzzle.generateNewPuzzle(1);
   };
 
   const getTimerColor = () => {
-    if (timeRemaining > 15) return 'timer-green';
-    if (timeRemaining > 10) return 'timer-yellow';
+    if (timer.timeRemaining > 15) return 'timer-green';
+    if (timer.timeRemaining > 10) return 'timer-yellow';
     return 'timer-red';
   };
 
-  const cellSize = Math.min(80, Math.floor(350 / currentSize));
+  const cellSize = Math.min(MAX_CELL_SIZE, Math.floor(BOARD_MAX_WIDTH / gameState.currentSize));
 
   return (
     <div className="speed-stack">
-      <h1>Speed Stack Sudoku</h1>
+      <GameHeader
+        timeRemaining={timer.timeRemaining}
+        score={gameState.score}
+        currentSize={gameState.currentSize}
+        completedCount={gameState.completedCount}
+        getTimerColor={getTimerColor}
+      />
 
-      <div className="stats">
-        <div className={`timer ${getTimerColor()}`}>
-          Time: {timeRemaining}s
-        </div>
-        <div className="score">Score: {score}</div>
-        <div className="level">
-          Level: {currentSize}×{currentSize} (#{completedCount + 1})
-        </div>
-      </div>
+      <GameModals
+        hasStarted={gameState.hasStarted}
+        isGameOver={gameState.isGameOver}
+        score={gameState.score}
+        currentSize={gameState.currentSize}
+        completedCount={gameState.completedCount}
+        onStart={handleStartGame}
+        onRestart={handleRestart}
+      />
 
-      <div className="progress-bar">
-        <div
-          className="progress-fill"
-          style={{
-            width: `${((completedCount % 3) / 3) * 100}%`,
-          }}
-        />
-      </div>
+      <GameBoard
+        userBoard={puzzle.userBoard}
+        puzzle={puzzle.puzzle}
+        selectedCell={puzzle.selectedCell}
+        feedback={feedback}
+        isNewPuzzle={puzzle.isNewPuzzle}
+        cellSize={cellSize}
+        onCellClick={handleCellClick}
+      />
 
-      {!hasStarted && (
-        <div className="start-overlay">
-          <div className="start-modal">
-            <h2>Ready to Stack?</h2>
-            <p>Start with simple 1×1 puzzles and progress all the way to 9×9!</p>
-            <p className="instructions">
-              • Click a number, then click cells to fill them
-              • Or click a cell first, then choose a number
-              • Complete puzzles quickly to level up
-              • Wrong answers cost you 5 seconds
-            </p>
-            <button className="start-button" onClick={handleStartGame}>
-              Start Game
-            </button>
-          </div>
-        </div>
-      )}
-
-      <div className={`game-board ${feedback || ''} ${isNewPuzzle ? 'new-puzzle' : ''}`}>
-        {userBoard.map((row, rowIndex) => (
-          <div key={rowIndex} className="board-row">
-            {row.map((cell, colIndex) => {
-              const isInitialClue = puzzle[rowIndex][colIndex] !== 0;
-              const isSelected =
-                selectedCell && selectedCell[0] === rowIndex && selectedCell[1] === colIndex;
-
-              return (
-                <div
-                  key={`${rowIndex}-${colIndex}`}
-                  className={`cell ${isInitialClue ? 'clue' : ''} ${isSelected ? 'selected' : ''}`}
-                  style={{
-                    width: `${cellSize}px`,
-                    height: `${cellSize}px`,
-                    fontSize: `${cellSize * 0.5}px`,
-                  }}
-                  onClick={() => handleCellClick(rowIndex, colIndex)}
-                >
-                  {cell !== 0 ? cell : ''}
-                </div>
-              );
-            })}
-          </div>
-        ))}
-      </div>
-
-      <div className="number-buttons">
-        {Array.from({ length: currentSize }, (_, i) => i + 1).map(num => (
-          <button
-            key={num}
-            className={`number-button ${selectedNumber === num ? 'selected' : ''}`}
-            onClick={() => handleNumberClick(num)}
-          >
-            {num}
-          </button>
-        ))}
-      </div>
-
-      {isGameOver && (
-        <div className="game-over-overlay">
-          <div className="game-over-modal">
-            <h2>Game Over!</h2>
-            <p className="final-score">Final Score: {score}</p>
-            <p className="final-level">
-              Reached Level: {currentSize}×{currentSize}
-            </p>
-            <p className="total-completed">Puzzles Completed: {completedCount}</p>
-            <button className="restart-button" onClick={handleRestart}>
-              Play Again
-            </button>
-          </div>
-        </div>
-      )}
+      <NumberPad
+        gridSize={gameState.currentSize}
+        selectedNumber={puzzle.selectedNumber}
+        onNumberClick={handleNumberClick}
+      />
     </div>
   );
 }

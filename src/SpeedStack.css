@@ -5,8 +5,9 @@
   padding: 2rem;
   min-height: 100vh;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+  font-family:
+    -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell',
+    'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
 }
 
 h1 {
@@ -46,7 +47,8 @@ h1 {
 }
 
 @keyframes pulse {
-  0%, 100% {
+  0%,
+  100% {
     transform: scale(1);
   }
   50% {
@@ -54,7 +56,8 @@ h1 {
   }
 }
 
-.score, .level {
+.score,
+.level {
   padding: 0.75rem 1.5rem;
   background-color: white;
   color: #333;
@@ -99,7 +102,8 @@ h1 {
 }
 
 @keyframes flash-green {
-  0%, 100% {
+  0%,
+  100% {
     background-color: white;
   }
   50% {
@@ -108,13 +112,21 @@ h1 {
 }
 
 @keyframes shake {
-  0%, 100% {
+  0%,
+  100% {
     transform: translateX(0);
   }
-  10%, 30%, 50%, 70%, 90% {
+  10%,
+  30%,
+  50%,
+  70%,
+  90% {
     transform: translateX(-5px);
   }
-  20%, 40%, 60%, 80% {
+  20%,
+  40%,
+  60%,
+  80% {
     transform: translateX(5px);
   }
 }
@@ -331,7 +343,8 @@ h1 {
   margin-bottom: 1rem;
 }
 
-.final-level, .total-completed {
+.final-level,
+.total-completed {
   font-size: 1.2rem;
   color: #6b7280;
   margin-bottom: 0.5rem;
@@ -372,7 +385,9 @@ h1 {
     font-size: 1rem;
   }
 
-  .timer, .score, .level {
+  .timer,
+  .score,
+  .level {
     padding: 0.5rem 1rem;
   }
 

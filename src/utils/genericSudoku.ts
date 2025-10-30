@@ -24,9 +24,9 @@ interface DifficultyConfig {
 }
 
 const DIFFICULTY_MAP: Record<GridSize, DifficultyConfig> = {
-  1: { min: 1, max: 1 },   // 1 empty cell (the only cell)
-  2: { min: 2, max: 3 },   // 2-3 empty cells out of 4
-  3: { min: 4, max: 5 },   // 4-5 empty cells out of 9
+  1: { min: 1, max: 1 }, // 1 empty cell (the only cell)
+  2: { min: 2, max: 3 }, // 2-3 empty cells out of 4
+  3: { min: 4, max: 5 }, // 4-5 empty cells out of 9
   4: { min: 6, max: 8 },
   5: { min: 10, max: 12 },
   6: { min: 15, max: 18 },
@@ -41,7 +41,7 @@ const DIFFICULTY_MAP: Record<GridSize, DifficultyConfig> = {
 function createEmptyBoard(size: GridSize): Board {
   return Array(size)
     .fill(null)
-    .map(() => Array(size).fill(0));
+    .map(() => Array<number>(size).fill(0)) as Board;
 }
 
 /**
@@ -151,7 +151,8 @@ export function generatePuzzle(size: GridSize): { puzzle: Board; solution: Board
 
   const difficultyConfig = DIFFICULTY_MAP[size];
   const cellsToRemove =
-    Math.floor(Math.random() * (difficultyConfig.max - difficultyConfig.min + 1)) + difficultyConfig.min;
+    Math.floor(Math.random() * (difficultyConfig.max - difficultyConfig.min + 1)) +
+    difficultyConfig.min;
 
   const positions: [number, number][] = [];
 

@@ -363,7 +363,10 @@ describe('genericSudoku', () => {
     });
 
     it('should return false for a board with one empty cell', () => {
-      const board = [[1, 2], [2, 0]];
+      const board = [
+        [1, 2],
+        [2, 0],
+      ];
       expect(isBoardComplete(board)).toBe(false);
     });
   });
