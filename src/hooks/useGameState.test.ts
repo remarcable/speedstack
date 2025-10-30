@@ -31,7 +31,7 @@ describe('useGameState', () => {
       nextSize = result.current.completeLevel(10);
     });
 
-    expect(nextSize!).toBe(1); // Still size 1 after first completion
+    expect(nextSize!).toBe(2); // After 1 completion, move to size 2
     expect(result.current.completedCount).toBe(1);
     expect(result.current.score).toBe(10);
   });
@@ -39,17 +39,17 @@ describe('useGameState', () => {
   it('progresses through levels correctly', async () => {
     const { result } = renderHook(() => useGameState());
 
-    // Complete 3 levels to reach size 2
+    // Complete 3 levels to reach size 3
     act(() => {
-      result.current.completeLevel(10); // Completion 1
-      result.current.completeLevel(10); // Completion 2
-      result.current.completeLevel(10); // Completion 3
+      result.current.completeLevel(10); // Completion 1 (1x1 done, move to 2x2)
+      result.current.completeLevel(10); // Completion 2 (2x2 #1 done)
+      result.current.completeLevel(10); // Completion 3 (2x2 #2 done, move to 3x3)
     });
 
     await waitFor(() => {
       expect(result.current.completedCount).toBe(3);
       expect(result.current.score).toBe(30);
-      expect(result.current.currentSize).toBe(2); // Should now be size 2
+      expect(result.current.currentSize).toBe(3); // Should now be size 3
     });
   });
 

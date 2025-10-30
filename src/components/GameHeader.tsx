@@ -3,6 +3,7 @@ interface GameHeaderProps {
   score: number;
   currentSize: number;
   completedCount: number;
+  timeBonus: number | null;
   getTimerColor: () => string;
 }
 
@@ -11,6 +12,7 @@ export function GameHeader({
   score,
   currentSize,
   completedCount,
+  timeBonus,
   getTimerColor,
 }: GameHeaderProps) {
   return (
@@ -18,7 +20,10 @@ export function GameHeader({
       <h1>Speed Stack Sudoku</h1>
 
       <div className="stats">
-        <div className={`timer ${getTimerColor()}`}>Time: {timeRemaining}s</div>
+        <div className={`timer ${getTimerColor()}`}>
+          Time: {Math.round(timeRemaining)}s
+          {timeBonus !== null && <div className="time-bonus-popup">+{timeBonus}s</div>}
+        </div>
         <div className="score">Score: {score}</div>
         <div className="level">
           Level: {currentSize}×{currentSize} (#{completedCount + 1})

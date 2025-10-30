@@ -1,12 +1,12 @@
 import { useState, useEffect, useCallback } from 'react';
 import { isValidMove, isBoardComplete, isValidBoard, type Board } from '../utils/genericSudoku';
 import {
-  TIME_BONUS,
   TIME_PENALTY,
   POINTS_PER_SIZE_MULTIPLIER,
   MAX_CELL_SIZE,
   BOARD_MAX_WIDTH,
   FEEDBACK_ANIMATION_DURATION,
+  getTimeBonus,
 } from '../constants/gameConfig';
 import { useTimer } from '../hooks/useTimer';
 import { useGameState } from '../hooks/useGameState';
@@ -19,6 +19,7 @@ import '../SpeedStack.css';
 
 function SpeedStack() {
   const [feedback, setFeedback] = useState<'correct' | 'incorrect' | null>(null);
+  const [timeBonus, setTimeBonus] = useState<number | null>(null);
 
   // Custom hooks
   const gameState = useGameState();
@@ -45,9 +46,18 @@ function SpeedStack() {
       const isCorrect = isValidBoard(boardToCheck);
 
       if (isCorrect) {
-        // Calculate points and add time bonus
-        const points = gameState.currentSize * POINTS_PER_SIZE_MULTIPLIER;
-        timer.setTimeRemaining(timer.timeRemaining + TIME_BONUS);
+        // Calculate points and time bonus based on current size
+        const currentSize = gameState.currentSize;
+        const points: number = currentSize * POINTS_PER_SIZE_MULTIPLIER;
+        const bonus: number = getTimeBonus(currentSize);
+
+        // Add time bonus
+        const newTime: number = timer.timeRemaining + bonus;
+        timer.setTimeRemaining(newTime);
+
+        // Show time bonus animation
+        setTimeBonus(bonus);
+        setTimeout(() => setTimeBonus(null), 600);
 
         // Progress to next level (puzzle generation happens in effect above)
         gameState.completeLevel(points);
@@ -59,28 +69,47 @@ function SpeedStack() {
     [gameState, timer]
   );
 
-  const fillCell = (row: number, col: number, num: number) => {
-    const newBoard = puzzle.userBoard.map(r => [...r]);
-    newBoard[row][col] = num;
+  const fillCell = useCallback(
+    (row: number, col: number, num: number) => {
+      const newBoard = puzzle.userBoard.map(r => [...r]);
+      newBoard[row][col] = num;
 
-    if (isValidMove(puzzle.userBoard, row, col, num)) {
+      if (isValidMove(puzzle.userBoard, row, col, num)) {
+        puzzle.updateUserBoard(newBoard);
+
+        // Check completion with the new board
+        checkCompletion(newBoard);
+      } else {
+        // Invalid move - penalty
+        timer.subtractTime(TIME_PENALTY);
+        setFeedback('incorrect');
+        setTimeout(() => setFeedback(null), 500);
+      }
+    },
+    [puzzle, checkCompletion, timer]
+  );
+
+  const clearCell = useCallback(
+    (row: number, col: number) => {
+      const newBoard = puzzle.userBoard.map(r => [...r]);
+      newBoard[row][col] = 0;
       puzzle.updateUserBoard(newBoard);
-      setFeedback('correct');
-      setTimeout(() => setFeedback(null), 300);
-
-      // Check completion with the new board
-      checkCompletion(newBoard);
-    } else {
-      // Invalid move - penalty
-      timer.subtractTime(TIME_PENALTY);
-      setFeedback('incorrect');
-      setTimeout(() => setFeedback(null), 500);
-    }
-  };
+    },
+    [puzzle]
+  );
 
   const handleCellClick = (row: number, col: number) => {
     if (!gameState.hasStarted || gameState.isGameOver) return;
     if (puzzle.puzzle[row][col] !== 0) return; // Can't change initial clues
+
+    const currentValue = puzzle.userBoard[row][col];
+
+    // If cell already has a value (that we placed), clear it
+    if (currentValue !== 0) {
+      clearCell(row, col);
+      puzzle.setSelectedCell(null);
+      return;
+    }
 
     // If a number is already selected, fill the cell
     if (puzzle.selectedNumber !== null) {
@@ -95,25 +124,62 @@ function SpeedStack() {
     gameState.startGame();
   };
 
-  const handleNumberClick = (num: number) => {
-    if (!gameState.hasStarted || gameState.isGameOver) return;
+  const handleNumberClick = useCallback(
+    (num: number) => {
+      if (!gameState.hasStarted || gameState.isGameOver) return;
 
-    // Toggle number selection
-    if (puzzle.selectedNumber === num) {
-      puzzle.setSelectedNumber(null);
-    } else {
-      puzzle.setSelectedNumber(num);
+      // Toggle number selection
+      if (puzzle.selectedNumber === num) {
+        puzzle.setSelectedNumber(null);
+      } else {
+        puzzle.setSelectedNumber(num);
 
-      // If a cell is already selected, fill it immediately
-      if (puzzle.selectedCell) {
-        const [row, col] = puzzle.selectedCell;
-        if (puzzle.puzzle[row][col] === 0) {
-          fillCell(row, col, num);
-          puzzle.setSelectedCell(null);
+        // If a cell is already selected, fill it immediately
+        if (puzzle.selectedCell) {
+          const [row, col] = puzzle.selectedCell;
+          if (puzzle.puzzle[row][col] === 0) {
+            fillCell(row, col, num);
+            puzzle.setSelectedCell(null);
+          }
         }
       }
-    }
-  };
+    },
+    [gameState, puzzle, fillCell]
+  );
+
+  // Keyboard input support
+  useEffect(() => {
+    const handleKeyPress = (e: KeyboardEvent) => {
+      if (!gameState.hasStarted || gameState.isGameOver) return;
+
+      // Handle number keys 1-9
+      const num = parseInt(e.key);
+      if (!isNaN(num) && num >= 1 && num <= gameState.currentSize) {
+        handleNumberClick(num);
+        return;
+      }
+
+      // Handle Delete/Backspace to clear selected cell
+      if ((e.key === 'Delete' || e.key === 'Backspace') && puzzle.selectedCell) {
+        const [row, col] = puzzle.selectedCell;
+        if (puzzle.puzzle[row][col] === 0 && puzzle.userBoard[row][col] !== 0) {
+          clearCell(row, col);
+        }
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyPress);
+    return () => window.removeEventListener('keydown', handleKeyPress);
+  }, [
+    gameState.hasStarted,
+    gameState.isGameOver,
+    gameState.currentSize,
+    puzzle.selectedCell,
+    puzzle.puzzle,
+    puzzle.userBoard,
+    handleNumberClick,
+    clearCell,
+  ]);
 
   const handleRestart = () => {
     gameState.resetGame();
@@ -139,6 +205,7 @@ function SpeedStack() {
         score={gameState.score}
         currentSize={gameState.currentSize}
         completedCount={gameState.completedCount}
+        timeBonus={timeBonus}
         getTimerColor={getTimerColor}
       />
 
