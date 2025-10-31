@@ -146,6 +146,9 @@ html {
   color: var(--color-text-primary);
   font-size: var(--font-size-lg);
   font-weight: var(--font-weight-medium);
+  font-variant-numeric: tabular-nums;
+  min-width: 4ch;
+  text-align: center;
 }
 
 .time-delta-popup {
@@ -595,12 +598,14 @@ html {
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: var(--overlay-bg);
+  background-color: var(--color-bg-secondary);
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 1000;
   animation: fadeIn var(--transition-medium);
+  overflow-y: auto;
+  padding: clamp(1rem, 3vw, var(--spacing-3xl)) clamp(0.5rem, 2vw, var(--spacing-xl));
 }
 
 @keyframes fadeIn {
@@ -615,15 +620,16 @@ html {
 .game-over-modal {
   background-color: var(--color-bg-primary);
   padding: var(--spacing-3xl);
-  border-radius: var(--radius-sm);
   text-align: center;
-  border: var(--border-width) solid var(--color-border-light);
+  width: 100%;
+  max-width: 600px;
+  border-radius: var(--radius-md);
   animation: slideUp var(--transition-medium);
 }
 
 @keyframes slideUp {
   from {
-    transform: translateY(50px);
+    transform: translateY(30px);
     opacity: 0;
   }
   to {

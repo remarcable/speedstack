@@ -73,14 +73,14 @@ export function GameModals({
       >
         <h2>Game Over!</h2>
         <div className="game-stats">
-          <p className="final-level">
+          <p className="final-level">{score} points</p>
+          <p className="final-score">
             Level: {completedCount} ({currentSize}×{currentSize})
           </p>
-          <p className="final-score">Score: {score}</p>
-          <p className="play-time">Time: {formatTime(playTime)}</p>
+          <p className="play-time">Time played: {formatTime(playTime)}</p>
           <div className="bonus-penalty-stats">
-            <span className="bonuses">Bonuses: +{totalBonuses}s</span>
-            <span className="penalties">Penalties: -{totalPenalties}s</span>
+            <span className="bonuses">Bonuses: +{Math.round(totalBonuses * 10) / 10}s</span>
+            <span className="penalties">Penalties: -{Math.round(totalPenalties * 10) / 10}s</span>
           </div>
         </div>
 
@@ -91,7 +91,7 @@ export function GameModals({
               <thead>
                 <tr>
                   <th>Rank</th>
-                  <th>Score</th>
+                  <th>Points</th>
                   <th>Level</th>
                   <th>Time</th>
                   <th>Date</th>

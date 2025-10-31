@@ -11,9 +11,10 @@ export const POINTS_PER_SIZE_MULTIPLIER = 8;
  * Calculate time bonus based on puzzle size
  * Formula: size² × 1.8 seconds
  * This creates a tighter time pressure for more challenge
+ * Rounded to avoid floating point precision errors
  */
 export function getTimeBonus(size: GridSize): number {
-  return size * size * 1.8;
+  return Math.round(size * size * 1.8 * 10) / 10;
 }
 
 /**

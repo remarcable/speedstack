@@ -21,11 +21,11 @@ export function GameHeader({
     <div className="top-bar">
       <h1 className="game-title">Speed Stack</h1>
       <div className="timer-container">
-        <div className={`timer ${getTimerColor()}`}>{Math.round(timeRemaining)}s</div>
+        <div className={`timer ${getTimerColor()}`}>{timeRemaining.toFixed(1)}s</div>
         {timeDelta !== null && (
           <div className={`time-delta-popup ${timeDelta > 0 ? 'positive' : 'negative'}`}>
             {timeDelta > 0 ? '+' : ''}
-            {timeDelta}s
+            {Math.round(timeDelta)}s
           </div>
         )}
       </div>
