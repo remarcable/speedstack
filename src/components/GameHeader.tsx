@@ -2,6 +2,7 @@ interface GameHeaderProps {
   timeRemaining: number;
   currentSize: number;
   score: number;
+  completedCount: number;
   pointsEarned: number | null;
   timeDelta: number | null;
   getTimerColor: () => string;
@@ -11,6 +12,7 @@ export function GameHeader({
   timeRemaining,
   currentSize,
   score,
+  completedCount,
   pointsEarned,
   timeDelta,
   getTimerColor,
@@ -29,7 +31,7 @@ export function GameHeader({
       </div>
       <div className="game-info">
         <div className="level-info">
-          {currentSize}×{currentSize}
+          Lvl {completedCount} ({currentSize}×{currentSize})
         </div>
         <div className="score-info">
           {score} pts

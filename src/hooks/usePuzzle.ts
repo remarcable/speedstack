@@ -9,12 +9,14 @@ interface UsePuzzleReturn {
   selectedCell: [number, number] | null;
   selectedNumber: number | null;
   isNewPuzzle: boolean;
+  puzzleStartTime: number;
   setSelectedCell: (cell: [number, number] | null) => void;
   setSelectedNumber: (num: number | null) => void;
   updateUserBoard: (board: Board) => void;
   checkIfComplete: () => boolean;
   checkIfCorrect: () => boolean;
   generateNewPuzzle: (size: GridSize) => void;
+  getPuzzleElapsedTime: () => number;
 }
 
 export function usePuzzle(): UsePuzzleReturn {
@@ -24,6 +26,7 @@ export function usePuzzle(): UsePuzzleReturn {
   const [selectedCell, setSelectedCell] = useState<[number, number] | null>(null);
   const [selectedNumber, setSelectedNumber] = useState<number | null>(null);
   const [isNewPuzzle, setIsNewPuzzle] = useState(false);
+  const [puzzleStartTime, setPuzzleStartTime] = useState<number>(() => Date.now());
 
   const generateNewPuzzleCallback = useCallback((size: GridSize) => {
     const { puzzle: newPuzzle, solution: newSolution } = generatePuzzle(size);
@@ -32,6 +35,7 @@ export function usePuzzle(): UsePuzzleReturn {
     setUserBoard(newPuzzle.map(row => [...row]));
     setSelectedCell(null);
     setSelectedNumber(null);
+    setPuzzleStartTime(Date.now());
 
     // Trigger new puzzle animation
     setIsNewPuzzle(true);
@@ -59,6 +63,10 @@ export function usePuzzle(): UsePuzzleReturn {
     return true;
   };
 
+  const getPuzzleElapsedTime = (): number => {
+    return (Date.now() - puzzleStartTime) / 1000; // Return in seconds
+  };
+
   return {
     puzzle,
     solution,
@@ -66,11 +74,13 @@ export function usePuzzle(): UsePuzzleReturn {
     selectedCell,
     selectedNumber,
     isNewPuzzle,
+    puzzleStartTime,
     setSelectedCell,
     setSelectedNumber,
     updateUserBoard,
     checkIfComplete,
     checkIfCorrect,
     generateNewPuzzle: generateNewPuzzleCallback,
+    getPuzzleElapsedTime,
   };
 }

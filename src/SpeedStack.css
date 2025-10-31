@@ -638,18 +638,93 @@ html {
   margin-bottom: var(--spacing-lg);
 }
 
-.final-score {
+.game-stats {
+  margin-bottom: var(--spacing-xl);
+}
+
+.final-level {
   font-size: var(--font-size-3xl);
   font-weight: var(--font-weight-medium);
   color: var(--color-text-primary);
   margin-bottom: var(--spacing-md);
 }
 
-.final-level,
-.total-completed {
+.final-score,
+.play-time {
   font-size: var(--font-size-lg);
   color: var(--color-text-secondary);
   margin-bottom: var(--spacing-xs);
+}
+
+.bonus-penalty-stats {
+  display: flex;
+  justify-content: center;
+  gap: var(--spacing-lg);
+  margin-top: var(--spacing-md);
+  font-size: var(--font-size-md);
+}
+
+.bonus-penalty-stats .bonuses {
+  color: #4ade80;
+}
+
+.bonus-penalty-stats .penalties {
+  color: #f87171;
+}
+
+.leaderboard-section {
+  margin-top: var(--spacing-xl);
+  margin-bottom: var(--spacing-xl);
+}
+
+.leaderboard-section h3 {
+  font-size: var(--font-size-2xl);
+  color: var(--color-text-primary);
+  margin-bottom: var(--spacing-md);
+}
+
+.leaderboard-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--font-size-sm);
+  margin-top: var(--spacing-md);
+}
+
+.leaderboard-table th {
+  padding: var(--spacing-sm);
+  text-align: left;
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-secondary);
+  border-bottom: var(--border-width-thick) solid var(--color-border);
+}
+
+.leaderboard-table td {
+  padding: var(--spacing-sm);
+  color: var(--color-text-primary);
+  border-bottom: var(--border-width) solid var(--color-border-light);
+}
+
+.leaderboard-table tbody tr {
+  transition: background-color var(--transition-fast);
+}
+
+.leaderboard-table tbody tr:hover {
+  background-color: var(--color-bg-secondary);
+}
+
+.leaderboard-table tbody tr.current-score {
+  background-color: rgba(74, 222, 128, 0.1);
+  font-weight: var(--font-weight-medium);
+}
+
+.leaderboard-table tbody tr.current-score td {
+  color: #4ade80;
+}
+
+@media (prefers-color-scheme: dark) {
+  .leaderboard-table tbody tr.current-score {
+    background-color: rgba(74, 222, 128, 0.15);
+  }
 }
 
 .restart-button {

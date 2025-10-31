@@ -16,6 +16,21 @@ export function getTimeBonus(size: GridSize): number {
   return size * size * 1.8;
 }
 
+/**
+ * Calculate speed multiplier based on time elapsed
+ * Starts at 3x and decays linearly to 1x over 30 seconds
+ * Formula: max(1.0, 3.0 - (timeElapsed / 15))
+ *
+ * Examples:
+ * - 0s: 3.0x
+ * - 7.5s: 2.0x
+ * - 15s: 1.5x
+ * - 30+s: 1.0x
+ */
+export function calculateSpeedMultiplier(timeElapsedSeconds: number): number {
+  return Math.max(1.0, 3.0 - timeElapsedSeconds / 15);
+}
+
 // UI Configuration
 export const MAX_CELL_SIZE = 80;
 export const BOARD_MAX_WIDTH = 350;

@@ -5,10 +5,12 @@ import {
   POINTS_PER_SIZE_MULTIPLIER,
   FEEDBACK_ANIMATION_DURATION,
   getTimeBonus,
+  calculateSpeedMultiplier,
 } from '../constants/gameConfig';
 import { useTimer } from '../hooks/useTimer';
 import { useGameState } from '../hooks/useGameState';
 import { usePuzzle } from '../hooks/usePuzzle';
+import { useLeaderboard } from '../hooks/useLeaderboard';
 import { GameHeader } from './GameHeader';
 import { GameBoard } from './GameBoard';
 import { NumberPad } from './NumberPad';
@@ -27,7 +29,19 @@ function SpeedStack() {
   // Custom hooks
   const gameState = useGameState();
   const puzzle = usePuzzle();
-  const timer = useTimer(timerStarted, gameState.isGameOver, () => gameState.setIsGameOver(true));
+  const leaderboard = useLeaderboard();
+  const timer = useTimer(timerStarted, gameState.isGameOver, () => {
+    gameState.setIsGameOver(true);
+    // Save to leaderboard when game ends
+    leaderboard.saveScore({
+      score: gameState.score,
+      maxLevel: gameState.currentSize,
+      completedCount: gameState.completedCount,
+      bonuses: gameState.totalBonuses,
+      penalties: gameState.totalPenalties,
+      playTime: gameState.getPlayTime(),
+    });
+  });
 
   // Generate puzzle on mount and whenever size changes
   useEffect(() => {
@@ -79,13 +93,17 @@ function SpeedStack() {
           setTimerStarted(true);
         }
 
-        // Calculate points and time bonus based on current size
+        // Calculate points with speed multiplier
         const currentSize = gameState.currentSize;
-        const points: number = currentSize * POINTS_PER_SIZE_MULTIPLIER;
+        const basePoints = currentSize * POINTS_PER_SIZE_MULTIPLIER;
+        const timeElapsed: number = puzzle.getPuzzleElapsedTime();
+        const speedMultiplier: number = calculateSpeedMultiplier(timeElapsed);
+        const points: number = Math.round(basePoints * speedMultiplier);
         const bonus: number = getTimeBonus(currentSize);
 
         // Add time bonus
         timer.addTime(bonus);
+        gameState.addBonus(bonus);
 
         // Show time delta animation
         setTimeDelta(bonus);
@@ -108,7 +126,7 @@ function SpeedStack() {
         setTimeout(() => setFeedback(null), FEEDBACK_ANIMATION_DURATION);
       }
     },
-    [gameState, timer, timerStarted, showTooltip]
+    [gameState, timer, timerStarted, showTooltip, puzzle]
   );
 
   const fillCell = useCallback(
@@ -125,6 +143,7 @@ function SpeedStack() {
         // Invalid move - penalty (only if timer has started)
         if (timerStarted) {
           timer.subtractTime(TIME_PENALTY);
+          gameState.addPenalty(TIME_PENALTY);
 
           // Show time delta animation (negative)
           setTimeDelta(-TIME_PENALTY);
@@ -135,7 +154,7 @@ function SpeedStack() {
         setTimeout(() => setFeedback(null), 500);
       }
     },
-    [puzzle, checkCompletion, timer, timerStarted]
+    [puzzle, checkCompletion, timer, timerStarted, gameState]
   );
 
   const clearCell = useCallback(
@@ -264,6 +283,7 @@ function SpeedStack() {
           timeRemaining={timer.timeRemaining}
           currentSize={gameState.currentSize}
           score={gameState.score}
+          completedCount={gameState.completedCount}
           pointsEarned={pointsEarned}
           timeDelta={timeDelta}
           getTimerColor={getTimerColor}
@@ -276,6 +296,10 @@ function SpeedStack() {
         score={gameState.score}
         currentSize={gameState.currentSize}
         completedCount={gameState.completedCount}
+        totalBonuses={gameState.totalBonuses}
+        totalPenalties={gameState.totalPenalties}
+        playTime={gameState.getPlayTime()}
+        leaderboard={leaderboard.leaderboard}
         onStart={handleStartGame}
         onRestart={handleRestart}
       />
