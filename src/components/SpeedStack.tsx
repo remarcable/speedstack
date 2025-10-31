@@ -24,6 +24,7 @@ function SpeedStack() {
   const [pointsEarned, setPointsEarned] = useState<number | null>(null);
   const [timerStarted, setTimerStarted] = useState(false);
   const [showTooltip, setShowTooltip] = useState(false);
+  const [tooltipFadingOut, setTooltipFadingOut] = useState(false);
 
   // Custom hooks
   const gameState = useGameState();
@@ -44,10 +45,16 @@ function SpeedStack() {
       }, 5000);
 
       return () => clearTimeout(tooltipTimer);
-    } else {
-      setShowTooltip(false);
+    } else if (showTooltip) {
+      // Fade out before hiding
+      setTooltipFadingOut(true);
+      const fadeTimer = setTimeout(() => {
+        setShowTooltip(false);
+        setTooltipFadingOut(false);
+      }, 300);
+      return () => clearTimeout(fadeTimer);
     }
-  }, [timerStarted, gameState.isGameOver]);
+  }, [timerStarted, gameState.isGameOver, showTooltip]);
 
   // Check for puzzle completion
   const checkCompletion = useCallback(
@@ -283,7 +290,9 @@ function SpeedStack() {
         />
 
         {showTooltip && (
-          <div className="instruction-tooltip">Click the number, then click the box</div>
+          <div className={`instruction-tooltip ${tooltipFadingOut ? 'fading-out' : ''}`}>
+            Click the number, then click the box
+          </div>
         )}
       </div>
     </div>

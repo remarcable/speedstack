@@ -606,6 +606,10 @@ html {
     tooltipBounce 2s ease infinite;
 }
 
+.instruction-tooltip.fading-out {
+  animation: tooltipFadeOut 0.3s ease forwards;
+}
+
 .instruction-tooltip::before {
   content: '';
   position: absolute;
@@ -637,6 +641,17 @@ html {
   }
   50% {
     transform: translateX(-50%) translateY(-4px);
+  }
+}
+
+@keyframes tooltipFadeOut {
+  0% {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-5px);
   }
 }
 
