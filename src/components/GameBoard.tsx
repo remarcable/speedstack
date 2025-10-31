@@ -21,6 +21,12 @@ export function GameBoard({
   onCellClick,
 }: GameBoardProps) {
   const gridSize = userBoard.length as GridSize;
+
+  // Return empty board if no valid grid size
+  if (!gridSize || gridSize < 1 || gridSize > 9) {
+    return <div className="game-board" />;
+  }
+
   const boxConfig = BOX_CONFIG[gridSize];
   const isLastRow = (rowIndex: number) => rowIndex === gridSize - 1;
   const isLastCol = (colIndex: number) => colIndex === gridSize - 1;

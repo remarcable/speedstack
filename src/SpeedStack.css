@@ -84,6 +84,7 @@ html {
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   padding: var(--spacing-xl);
   min-height: 100vh;
   background: var(--color-bg-secondary);
@@ -92,27 +93,16 @@ html {
     'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
 }
 
-h1 {
-  color: var(--color-text-primary);
-  margin-bottom: var(--spacing-lg);
-  font-size: var(--font-size-4xl);
-}
-
 .stats {
   display: flex;
-  gap: var(--spacing-xl);
-  margin-bottom: var(--spacing-md);
-  font-size: var(--font-size-lg);
+  margin-bottom: var(--spacing-lg);
+  font-size: var(--font-size-3xl);
   font-weight: var(--font-weight-medium);
 }
 
 .timer {
-  padding: var(--spacing-sm) var(--spacing-lg);
-  background-color: var(--color-bg-primary);
-  border-radius: var(--radius-sm);
-  border: var(--border-width) solid var(--color-border-light);
-  transition: all var(--transition-medium);
   position: relative;
+  color: var(--color-text-primary);
 }
 
 .timer-green {
@@ -120,7 +110,7 @@ h1 {
 }
 
 .timer-yellow {
-  color: var(--color-text-secondary);
+  color: var(--color-text-primary);
 }
 
 .timer-red {
@@ -167,30 +157,6 @@ h1 {
     opacity: 0;
     transform: translateX(-50%) translateY(-50px) scale(1);
   }
-}
-
-.score,
-.level {
-  padding: var(--spacing-sm) var(--spacing-lg);
-  background-color: var(--color-bg-primary);
-  color: var(--color-text-primary);
-  border-radius: var(--radius-sm);
-  border: var(--border-width) solid var(--color-border-light);
-}
-
-.progress-bar {
-  width: var(--board-max-width);
-  height: 8px;
-  background-color: var(--color-border-light);
-  border-radius: var(--radius-sm);
-  margin-bottom: var(--spacing-lg);
-  overflow: hidden;
-}
-
-.progress-fill {
-  height: 100%;
-  background: var(--color-accent);
-  transition: width var(--transition-slow);
 }
 
 .game-board {
@@ -502,20 +468,8 @@ h1 {
 
 /* Mobile responsiveness */
 @media (max-width: 640px) {
-  h1 {
-    font-size: 1.8rem;
-  }
-
   .stats {
-    flex-direction: column;
-    gap: var(--spacing-xs);
-    font-size: var(--font-size-sm);
-  }
-
-  .timer,
-  .score,
-  .level {
-    padding: var(--spacing-xs) var(--spacing-md);
+    font-size: var(--font-size-xl);
   }
 
   .number-button {

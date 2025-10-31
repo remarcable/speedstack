@@ -9,35 +9,18 @@ interface GameHeaderProps {
 
 export function GameHeader({
   timeRemaining,
-  score,
-  currentSize,
-  completedCount,
+  score: _score,
+  currentSize: _currentSize,
+  completedCount: _completedCount,
   timeBonus,
   getTimerColor,
 }: GameHeaderProps) {
   return (
-    <>
-      <h1>Speed Stack Sudoku</h1>
-
-      <div className="stats">
-        <div className={`timer ${getTimerColor()}`}>
-          Time: {Math.round(timeRemaining)}s
-          {timeBonus !== null && <div className="time-bonus-popup">+{timeBonus}s</div>}
-        </div>
-        <div className="score">Score: {score}</div>
-        <div className="level">
-          Level: {currentSize}×{currentSize} (#{completedCount + 1})
-        </div>
+    <div className="stats">
+      <div className={`timer ${getTimerColor()}`}>
+        {Math.round(timeRemaining)}s
+        {timeBonus !== null && <div className="time-bonus-popup">+{timeBonus}s</div>}
       </div>
-
-      <div className="progress-bar">
-        <div
-          className="progress-fill"
-          style={{
-            width: `${((completedCount % 3) / 3) * 100}%`,
-          }}
-        />
-      </div>
-    </>
+    </div>
   );
 }
