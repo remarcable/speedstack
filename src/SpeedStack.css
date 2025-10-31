@@ -80,6 +80,36 @@ html {
   --board-max-width: 350px;
 }
 
+@media (prefers-color-scheme: dark) {
+  :root {
+    /* Base colors */
+    --color-black: #e8e8e8;
+    --color-gray-dark: #b0b0b0;
+    --color-gray-medium: #505050;
+    --color-gray-light: #404040;
+    --color-gray-lighter: #2a2a2a;
+    --color-gray-lightest: #1f1f1f;
+    --color-white: #1a1a1a;
+    --color-white-semi: #222222;
+
+    /* Semantic colors */
+    --color-text-primary: var(--color-black);
+    --color-text-secondary: var(--color-gray-dark);
+    --color-bg-primary: var(--color-white);
+    --color-bg-secondary: var(--color-gray-lightest);
+    --color-bg-tertiary: var(--color-gray-lighter);
+    --color-bg-hover: var(--color-white-semi);
+    --color-border: var(--color-gray-medium);
+    --color-border-light: var(--color-gray-light);
+    --color-accent: var(--color-black);
+    --color-accent-hover: #d0d0d0;
+    --color-accent-active: #ffffff;
+
+    /* Overlays */
+    --overlay-bg: rgba(0, 0, 0, 0.7);
+  }
+}
+
 .speed-stack {
   display: flex;
   flex-direction: column;
