@@ -22,16 +22,7 @@ export function GameModals({
   return (
     <>
       <Modal isOpen={!hasStarted} overlayClassName="start-overlay" contentClassName="start-modal">
-        <h2>Ready to Stack?</h2>
-        <p>Start with simple 1×1 puzzles and progress all the way to 9×9!</p>
-        <div className="instructions">
-          <ul>
-            <li>Click a number, then click cells to fill them</li>
-            <li>Or click a cell first, then choose a number</li>
-            <li>Complete puzzles quickly to level up</li>
-            <li>Wrong answers cost you 5 seconds</li>
-          </ul>
-        </div>
+        <h2>Speed Stack</h2>
         <button className="start-button" onClick={onStart}>
           Start Game
         </button>
