@@ -239,7 +239,7 @@ html {
   flex-direction: row;
   align-items: center;
   gap: var(--spacing-md);
-  color: var(--color-gray-dark);
+  color: var(--color-text-primary);
   font-size: var(--font-size-lg);
   font-weight: var(--font-weight-medium);
   justify-self: end;
@@ -247,7 +247,6 @@ html {
 
 .level-info,
 .score-info {
-  opacity: 0.7;
   position: relative;
 }
 
