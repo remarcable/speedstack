@@ -25,6 +25,7 @@ function SpeedStack() {
   const [timerStarted, setTimerStarted] = useState(false);
   const [showTooltip, setShowTooltip] = useState(false);
   const [tooltipFadingOut, setTooltipFadingOut] = useState(false);
+  const [isTransitioning, setIsTransitioning] = useState(false);
 
   // Custom hooks
   const gameState = useGameState();
@@ -70,6 +71,14 @@ function SpeedStack() {
       if (isCorrect) {
         // Start timer after first puzzle completion
         if (!timerStarted) {
+          // Fade out tooltip before starting timer
+          if (showTooltip) {
+            setTooltipFadingOut(true);
+            setTimeout(() => {
+              setShowTooltip(false);
+              setTooltipFadingOut(false);
+            }, 300);
+          }
           setTimerStarted(true);
         }
 
@@ -89,14 +98,20 @@ function SpeedStack() {
         setPointsEarned(points);
         setTimeout(() => setPointsEarned(null), 600);
 
-        // Progress to next level (puzzle generation happens in effect above)
-        gameState.completeLevel(points);
+        // Fade out transition
+        setIsTransitioning(true);
+        setTimeout(() => {
+          // Progress to next level (puzzle generation happens in effect above)
+          gameState.completeLevel(points);
+          // Fade back in
+          setTimeout(() => setIsTransitioning(false), 50);
+        }, 200);
 
         setFeedback('correct');
         setTimeout(() => setFeedback(null), FEEDBACK_ANIMATION_DURATION);
       }
     },
-    [gameState, timer, timerStarted]
+    [gameState, timer, timerStarted, showTooltip]
   );
 
   const fillCell = useCallback(
@@ -269,31 +284,33 @@ function SpeedStack() {
         onRestart={handleRestart}
       />
       <div className={`game-ui ${gameState.isGameOver ? 'hidden' : ''}`}>
-        <div className="game-container">
-          {timeBonus !== null && <div className="time-bonus-popup">+{timeBonus}s</div>}
-          {timePenalty !== null && <div className="time-penalty-popup">-{timePenalty}s</div>}
-          <GameBoard
-            userBoard={puzzle.userBoard}
-            puzzle={puzzle.puzzle}
-            selectedCell={puzzle.selectedCell}
-            feedback={feedback}
-            isNewPuzzle={puzzle.isNewPuzzle}
-            cellSize={cellSize}
-            onCellClick={handleCellClick}
-          />
-        </div>
-
-        <NumberPad
-          gridSize={gameState.currentSize}
-          selectedNumber={puzzle.selectedNumber}
-          onNumberClick={handleNumberClick}
-        />
-
-        {showTooltip && (
-          <div className={`instruction-tooltip ${tooltipFadingOut ? 'fading-out' : ''}`}>
-            Click the number, then click the box
+        <div className={`game-transition-container ${isTransitioning ? 'transitioning' : ''}`}>
+          <div className="game-container">
+            {timeBonus !== null && <div className="time-bonus-popup">+{timeBonus}s</div>}
+            {timePenalty !== null && <div className="time-penalty-popup">-{timePenalty}s</div>}
+            <GameBoard
+              userBoard={puzzle.userBoard}
+              puzzle={puzzle.puzzle}
+              selectedCell={puzzle.selectedCell}
+              feedback={feedback}
+              isNewPuzzle={puzzle.isNewPuzzle}
+              cellSize={cellSize}
+              onCellClick={handleCellClick}
+            />
           </div>
-        )}
+
+          <NumberPad
+            gridSize={gameState.currentSize}
+            selectedNumber={puzzle.selectedNumber}
+            onNumberClick={handleNumberClick}
+          />
+
+          {showTooltip && (
+            <div className={`instruction-tooltip ${tooltipFadingOut ? 'fading-out' : ''}`}>
+              Click the number, then click the box
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
