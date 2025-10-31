@@ -207,14 +207,18 @@ function SpeedStack() {
 
   const cellSize = Math.min(MAX_CELL_SIZE, Math.floor(BOARD_MAX_WIDTH / gameState.currentSize));
 
+  const showModal = !gameState.hasStarted || gameState.isGameOver;
+
   return (
     <div className="speed-stack">
-      <GameHeader
-        timeRemaining={timer.timeRemaining}
-        currentSize={gameState.currentSize}
-        score={gameState.score}
-        getTimerColor={getTimerColor}
-      />
+      <div className={`game-ui ${showModal ? 'hidden' : ''}`}>
+        <GameHeader
+          timeRemaining={timer.timeRemaining}
+          currentSize={gameState.currentSize}
+          score={gameState.score}
+          getTimerColor={getTimerColor}
+        />
+      </div>
 
       <GameModals
         hasStarted={gameState.hasStarted}
@@ -226,24 +230,26 @@ function SpeedStack() {
         onRestart={handleRestart}
       />
 
-      <div className="game-container">
-        {timeBonus !== null && <div className="time-bonus-popup">+{timeBonus}s</div>}
-        <GameBoard
-          userBoard={puzzle.userBoard}
-          puzzle={puzzle.puzzle}
-          selectedCell={puzzle.selectedCell}
-          feedback={feedback}
-          isNewPuzzle={puzzle.isNewPuzzle}
-          cellSize={cellSize}
-          onCellClick={handleCellClick}
+      <div className={`game-ui ${showModal ? 'hidden' : ''}`}>
+        <div className="game-container">
+          {timeBonus !== null && <div className="time-bonus-popup">+{timeBonus}s</div>}
+          <GameBoard
+            userBoard={puzzle.userBoard}
+            puzzle={puzzle.puzzle}
+            selectedCell={puzzle.selectedCell}
+            feedback={feedback}
+            isNewPuzzle={puzzle.isNewPuzzle}
+            cellSize={cellSize}
+            onCellClick={handleCellClick}
+          />
+        </div>
+
+        <NumberPad
+          gridSize={gameState.currentSize}
+          selectedNumber={puzzle.selectedNumber}
+          onNumberClick={handleNumberClick}
         />
       </div>
-
-      <NumberPad
-        gridSize={gameState.currentSize}
-        selectedNumber={puzzle.selectedNumber}
-        onNumberClick={handleNumberClick}
-      />
     </div>
   );
 }

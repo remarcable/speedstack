@@ -145,6 +145,16 @@ html {
   }
 }
 
+.game-ui {
+  opacity: 1;
+  transition: opacity var(--transition-fast);
+}
+
+.game-ui.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
 .game-container {
   position: relative;
 }
