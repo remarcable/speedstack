@@ -52,8 +52,7 @@ function SpeedStack() {
         const bonus: number = getTimeBonus(currentSize);
 
         // Add time bonus
-        const newTime: number = timer.timeRemaining + bonus;
-        timer.setTimeRemaining(newTime);
+        timer.addTime(bonus);
 
         // Show time bonus animation
         setTimeBonus(bonus);
@@ -212,10 +211,8 @@ function SpeedStack() {
     <div className="speed-stack">
       <GameHeader
         timeRemaining={timer.timeRemaining}
-        score={gameState.score}
         currentSize={gameState.currentSize}
-        completedCount={gameState.completedCount}
-        timeBonus={timeBonus}
+        score={gameState.score}
         getTimerColor={getTimerColor}
       />
 
@@ -229,15 +226,18 @@ function SpeedStack() {
         onRestart={handleRestart}
       />
 
-      <GameBoard
-        userBoard={puzzle.userBoard}
-        puzzle={puzzle.puzzle}
-        selectedCell={puzzle.selectedCell}
-        feedback={feedback}
-        isNewPuzzle={puzzle.isNewPuzzle}
-        cellSize={cellSize}
-        onCellClick={handleCellClick}
-      />
+      <div className="game-container">
+        {timeBonus !== null && <div className="time-bonus-popup">+{timeBonus}s</div>}
+        <GameBoard
+          userBoard={puzzle.userBoard}
+          puzzle={puzzle.puzzle}
+          selectedCell={puzzle.selectedCell}
+          feedback={feedback}
+          isNewPuzzle={puzzle.isNewPuzzle}
+          cellSize={cellSize}
+          onCellClick={handleCellClick}
+        />
+      </div>
 
       <NumberPad
         gridSize={gameState.currentSize}

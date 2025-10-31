@@ -1,25 +1,20 @@
 interface GameHeaderProps {
   timeRemaining: number;
-  score: number;
   currentSize: number;
-  completedCount: number;
-  timeBonus: number | null;
+  score: number;
   getTimerColor: () => string;
 }
 
-export function GameHeader({
-  timeRemaining,
-  score: _score,
-  currentSize: _currentSize,
-  completedCount: _completedCount,
-  timeBonus,
-  getTimerColor,
-}: GameHeaderProps) {
+export function GameHeader({ timeRemaining, currentSize, score, getTimerColor }: GameHeaderProps) {
   return (
-    <div className="stats">
-      <div className={`timer ${getTimerColor()}`}>
-        {Math.round(timeRemaining)}s
-        {timeBonus !== null && <div className="time-bonus-popup">+{timeBonus}s</div>}
+    <div className="top-bar">
+      <h1 className="game-title">Speed Stack</h1>
+      <div className={`timer ${getTimerColor()}`}>{Math.round(timeRemaining)}s</div>
+      <div className="game-info">
+        <div className="level-info">
+          {currentSize}×{currentSize}
+        </div>
+        <div className="score-info">{score} pts</div>
       </div>
     </div>
   );
