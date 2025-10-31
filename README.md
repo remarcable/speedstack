@@ -1,6 +1,6 @@
 # [Speed Stack](https://projects.marcnitzsche.de/speedstack/)
 
-A fast-paced progressive Sudoku game where you race against the clock. Start with small grids and work your way up to larger challenges. Complete puzzles quickly to earn time bonuses, but beware - wrong moves cost you precious seconds!
+Sudoku racing against the clock. Complete small grids and work your way up to more challenging ones. You'll earn time bonuses but lose time with wrong moves.
 
 ## Getting Started
 
