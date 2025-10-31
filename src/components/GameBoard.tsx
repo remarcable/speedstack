@@ -7,7 +7,6 @@ interface GameBoardProps {
   selectedCell: [number, number] | null;
   feedback: 'correct' | 'incorrect' | null;
   isNewPuzzle: boolean;
-  cellSize: number;
   onCellClick: (row: number, col: number) => void;
 }
 
@@ -17,7 +16,6 @@ export function GameBoard({
   selectedCell,
   feedback,
   isNewPuzzle,
-  cellSize,
   onCellClick,
 }: GameBoardProps) {
   const gridSize = userBoard.length as GridSize;
@@ -35,7 +33,10 @@ export function GameBoard({
   const hasBoxSubdivisions = boxConfig.rows > 1 && boxConfig.cols > 1;
 
   return (
-    <div className={`game-board ${feedback || ''} ${isNewPuzzle ? 'new-puzzle' : ''}`}>
+    <div
+      className={`game-board ${feedback || ''} ${isNewPuzzle ? 'new-puzzle' : ''}`}
+      data-grid-size={gridSize}
+    >
       {userBoard.map((row, rowIndex) => (
         <div key={rowIndex} className="board-row">
           {row.map((cell, colIndex) => {
@@ -63,11 +64,6 @@ export function GameBoard({
               <div
                 key={`${rowIndex}-${colIndex}`}
                 className={classes}
-                style={{
-                  width: `${cellSize}px`,
-                  height: `${cellSize}px`,
-                  fontSize: `${cellSize * 0.5}px`,
-                }}
                 onClick={() => onCellClick(rowIndex, colIndex)}
               >
                 {cell !== 0 ? cell : ''}

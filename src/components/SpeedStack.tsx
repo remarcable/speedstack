@@ -3,8 +3,6 @@ import { isValidMove, isBoardComplete, isValidBoard, type Board } from '../utils
 import {
   TIME_PENALTY,
   POINTS_PER_SIZE_MULTIPLIER,
-  MAX_CELL_SIZE,
-  BOARD_MAX_WIDTH,
   FEEDBACK_ANIMATION_DURATION,
   getTimeBonus,
 } from '../constants/gameConfig';
@@ -259,8 +257,6 @@ function SpeedStack() {
     return 'timer-red';
   };
 
-  const cellSize = Math.min(MAX_CELL_SIZE, Math.floor(BOARD_MAX_WIDTH / gameState.currentSize));
-
   return (
     <div className="speed-stack">
       <div className={`game-ui ${timerStarted ? '' : 'hidden'}`}>
@@ -292,7 +288,6 @@ function SpeedStack() {
               selectedCell={puzzle.selectedCell}
               feedback={feedback}
               isNewPuzzle={puzzle.isNewPuzzle}
-              cellSize={cellSize}
               onCellClick={handleCellClick}
             />
           </div>
