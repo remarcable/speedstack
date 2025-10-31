@@ -63,7 +63,7 @@ html {
   --font-size-4xl: 2.5rem;
 
   /* Transitions */
-  --transition-fast: 0.2s ease;
+  --transition-fast: 150ms ease;
   --transition-medium: 0.3s ease;
   --transition-slow: 0.5s ease;
 
@@ -147,7 +147,7 @@ html {
 
 .game-ui {
   opacity: 1;
-  transition: opacity var(--transition-fast);
+  transition: opacity var(--transition-medium);
 }
 
 .game-ui.hidden {
