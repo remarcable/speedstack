@@ -176,7 +176,7 @@ html {
 
 .game-ui {
   opacity: 1;
-  transition: opacity var(--transition-medium);
+  transition: opacity var(--transition-slow);
 }
 
 .game-ui.hidden {

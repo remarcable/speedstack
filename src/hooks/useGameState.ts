@@ -15,7 +15,7 @@ interface UseGameStateReturn {
 }
 
 export function useGameState(): UseGameStateReturn {
-  const [hasStarted, setHasStarted] = useState(false);
+  const [hasStarted, setHasStarted] = useState(true);
   const [currentSize, setCurrentSize] = useState<GridSize>(1);
   const [score, setScore] = useState(0);
   const [completedCount, setCompletedCount] = useState(0);
@@ -44,7 +44,7 @@ export function useGameState(): UseGameStateReturn {
   };
 
   const resetGame = () => {
-    setHasStarted(false);
+    setHasStarted(true);
     setCurrentSize(1);
     setScore(0);
     setCompletedCount(0);
