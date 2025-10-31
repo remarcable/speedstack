@@ -53,17 +53,16 @@ export function useGameState(): UseGameStateReturn {
   const completeLevel = (points: number): GridSize => {
     let nextSize: GridSize = 1;
 
-    // Update all state in a single batch
+    // Update states separately to avoid nested setters
     setCompletedCount(prev => {
       const newCompleted = prev + 1;
       nextSize = getNextSize(newCompleted);
-
-      // Update size and score in the same update cycle
       setCurrentSize(nextSize);
-      setScore(prevScore => prevScore + points);
-
       return newCompleted;
     });
+
+    // Update score separately to avoid double execution
+    setScore(prevScore => prevScore + points);
 
     return nextSize;
   };
