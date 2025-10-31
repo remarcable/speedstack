@@ -70,6 +70,7 @@ html {
   /* Borders */
   --border-width: 1px;
   --border-width-thick: 2px;
+  --border-width-subdivision: 3px;
 
   /* Overlays */
   --overlay-bg: rgba(0, 0, 0, 0.5);
@@ -262,12 +263,21 @@ h1 {
   display: flex;
   align-items: center;
   justify-content: center;
-  border: var(--border-width) solid var(--color-border);
+  border-top: var(--border-width) solid var(--color-border);
+  border-left: var(--border-width) solid var(--color-border);
   cursor: pointer;
   font-weight: var(--font-weight-normal);
   color: var(--color-text-primary);
   transition: all var(--transition-fast);
   user-select: none;
+}
+
+.board-row:last-child .cell {
+  border-bottom: var(--border-width) solid var(--color-border);
+}
+
+.cell:last-child {
+  border-right: var(--border-width) solid var(--color-border);
 }
 
 .cell:hover:not(.clue) {
@@ -284,6 +294,14 @@ h1 {
 .cell.selected {
   background-color: var(--color-bg-tertiary);
   box-shadow: inset 0 0 0 var(--border-width-thick) var(--color-accent);
+}
+
+.cell.thick-right {
+  border-right: var(--border-width-subdivision) solid var(--color-border);
+}
+
+.cell.thick-bottom {
+  border-bottom: var(--border-width-subdivision) solid var(--color-border);
 }
 
 .number-buttons {

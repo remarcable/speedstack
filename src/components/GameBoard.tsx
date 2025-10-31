@@ -1,4 +1,5 @@
-import type { Board } from '../utils/genericSudoku';
+import type { Board, GridSize } from '../utils/genericSudoku';
+import { BOX_CONFIG } from '../utils/genericSudoku';
 
 interface GameBoardProps {
   userBoard: Board;
@@ -19,6 +20,14 @@ export function GameBoard({
   cellSize,
   onCellClick,
 }: GameBoardProps) {
+  const gridSize = userBoard.length as GridSize;
+  const boxConfig = BOX_CONFIG[gridSize];
+  const isLastRow = (rowIndex: number) => rowIndex === gridSize - 1;
+  const isLastCol = (colIndex: number) => colIndex === gridSize - 1;
+
+  // Only show thick borders for grids with actual box subdivisions (rows > 1 and cols > 1)
+  const hasBoxSubdivisions = boxConfig.rows > 1 && boxConfig.cols > 1;
+
   return (
     <div className={`game-board ${feedback || ''} ${isNewPuzzle ? 'new-puzzle' : ''}`}>
       {userBoard.map((row, rowIndex) => (
@@ -28,10 +37,26 @@ export function GameBoard({
             const isSelected =
               selectedCell && selectedCell[0] === rowIndex && selectedCell[1] === colIndex;
 
+            // Add thick borders for subdivision boundaries (only if boxes are used)
+            const hasThickRightBorder =
+              hasBoxSubdivisions && !isLastCol(colIndex) && (colIndex + 1) % boxConfig.cols === 0;
+            const hasThickBottomBorder =
+              hasBoxSubdivisions && !isLastRow(rowIndex) && (rowIndex + 1) % boxConfig.rows === 0;
+
+            const classes = [
+              'cell',
+              isInitialClue ? 'clue' : '',
+              isSelected ? 'selected' : '',
+              hasThickRightBorder ? 'thick-right' : '',
+              hasThickBottomBorder ? 'thick-bottom' : '',
+            ]
+              .filter(Boolean)
+              .join(' ');
+
             return (
               <div
                 key={`${rowIndex}-${colIndex}`}
-                className={`cell ${isInitialClue ? 'clue' : ''} ${isSelected ? 'selected' : ''}`}
+                className={classes}
                 style={{
                   width: `${cellSize}px`,
                   height: `${cellSize}px`,

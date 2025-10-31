@@ -1,12 +1,12 @@
 export type GridSize = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;
 export type Board = number[][];
 
-interface BoxConfig {
+export interface BoxConfig {
   rows: number;
   cols: number;
 }
 
-const BOX_CONFIG: Record<GridSize, BoxConfig> = {
+export const BOX_CONFIG: Record<GridSize, BoxConfig> = {
   1: { rows: 1, cols: 1 },
   2: { rows: 1, cols: 2 }, // row-only constraint
   3: { rows: 1, cols: 3 }, // row-only constraint
