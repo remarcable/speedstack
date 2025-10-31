@@ -116,7 +116,6 @@ html {
   align-items: center;
   justify-content: center;
   padding: var(--spacing-xl);
-  padding-top: calc(var(--spacing-xl) * 4);
   min-height: 100vh;
   background: var(--color-bg-secondary);
   font-family:
