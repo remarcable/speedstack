@@ -104,20 +104,30 @@ function SpeedStack() {
 
     const currentValue = puzzle.userBoard[row][col];
 
-    // If cell already has a value (that we placed), clear it
+    // If a number is selected
+    if (puzzle.selectedNumber !== null) {
+      // If clicking a cell with the same number, clear it (keep number selected)
+      if (currentValue === puzzle.selectedNumber) {
+        clearCell(row, col);
+        puzzle.setSelectedCell(null);
+        return;
+      }
+
+      // Otherwise, fill/replace the cell with the selected number (keep number selected)
+      fillCell(row, col, puzzle.selectedNumber);
+      return;
+    }
+
+    // If no number is selected
+    // If cell has a value, clear it
     if (currentValue !== 0) {
       clearCell(row, col);
       puzzle.setSelectedCell(null);
       return;
     }
 
-    // If a number is already selected, fill the cell
-    if (puzzle.selectedNumber !== null) {
-      fillCell(row, col, puzzle.selectedNumber);
-    } else {
-      // Otherwise, just select the cell
-      puzzle.setSelectedCell([row, col]);
-    }
+    // Otherwise, just select the cell
+    puzzle.setSelectedCell([row, col]);
   };
 
   const handleStartGame = () => {
