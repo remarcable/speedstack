@@ -20,6 +20,8 @@ import '../SpeedStack.css';
 function SpeedStack() {
   const [feedback, setFeedback] = useState<'correct' | 'incorrect' | null>(null);
   const [timeBonus, setTimeBonus] = useState<number | null>(null);
+  const [timePenalty, setTimePenalty] = useState<number | null>(null);
+  const [pointsEarned, setPointsEarned] = useState<number | null>(null);
 
   // Custom hooks
   const gameState = useGameState();
@@ -58,6 +60,10 @@ function SpeedStack() {
         setTimeBonus(bonus);
         setTimeout(() => setTimeBonus(null), 600);
 
+        // Show points earned animation
+        setPointsEarned(points);
+        setTimeout(() => setPointsEarned(null), 600);
+
         // Progress to next level (puzzle generation happens in effect above)
         gameState.completeLevel(points);
 
@@ -81,6 +87,11 @@ function SpeedStack() {
       } else {
         // Invalid move - penalty
         timer.subtractTime(TIME_PENALTY);
+
+        // Show penalty animation
+        setTimePenalty(TIME_PENALTY);
+        setTimeout(() => setTimePenalty(null), 600);
+
         setFeedback('incorrect');
         setTimeout(() => setFeedback(null), 500);
       }
@@ -218,6 +229,7 @@ function SpeedStack() {
           timeRemaining={timer.timeRemaining}
           currentSize={gameState.currentSize}
           score={gameState.score}
+          pointsEarned={pointsEarned}
           getTimerColor={getTimerColor}
         />
       </div>
@@ -235,6 +247,7 @@ function SpeedStack() {
       <div className={`game-ui ${showModal ? 'hidden' : ''}`}>
         <div className="game-container">
           {timeBonus !== null && <div className="time-bonus-popup">+{timeBonus}s</div>}
+          {timePenalty !== null && <div className="time-penalty-popup">-{timePenalty}s</div>}
           <GameBoard
             userBoard={puzzle.userBoard}
             puzzle={puzzle.puzzle}
