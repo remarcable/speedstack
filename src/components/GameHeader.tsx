@@ -3,6 +3,7 @@ interface GameHeaderProps {
   currentSize: number;
   score: number;
   pointsEarned: number | null;
+  timeDelta: number | null;
   getTimerColor: () => string;
 }
 
@@ -11,12 +12,21 @@ export function GameHeader({
   currentSize,
   score,
   pointsEarned,
+  timeDelta,
   getTimerColor,
 }: GameHeaderProps) {
   return (
     <div className="top-bar">
       <h1 className="game-title">Speed Stack</h1>
-      <div className={`timer ${getTimerColor()}`}>{Math.round(timeRemaining)}s</div>
+      <div className="timer-container">
+        <div className={`timer ${getTimerColor()}`}>{Math.round(timeRemaining)}s</div>
+        {timeDelta !== null && (
+          <div className={`time-delta-popup ${timeDelta > 0 ? 'positive' : 'negative'}`}>
+            {timeDelta > 0 ? '+' : ''}
+            {timeDelta}s
+          </div>
+        )}
+      </div>
       <div className="game-info">
         <div className="level-info">
           {currentSize}×{currentSize}

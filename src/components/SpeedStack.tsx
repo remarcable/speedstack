@@ -19,9 +19,8 @@ import '../SpeedStack.css';
 
 function SpeedStack() {
   const [feedback, setFeedback] = useState<'correct' | 'incorrect' | null>(null);
-  const [timeBonus, setTimeBonus] = useState<number | null>(null);
-  const [timePenalty, setTimePenalty] = useState<number | null>(null);
   const [pointsEarned, setPointsEarned] = useState<number | null>(null);
+  const [timeDelta, setTimeDelta] = useState<number | null>(null);
   const [timerStarted, setTimerStarted] = useState(false);
   const [showTooltip, setShowTooltip] = useState(false);
   const [tooltipFadingOut, setTooltipFadingOut] = useState(false);
@@ -90,9 +89,9 @@ function SpeedStack() {
         // Add time bonus
         timer.addTime(bonus);
 
-        // Show time bonus animation
-        setTimeBonus(bonus);
-        setTimeout(() => setTimeBonus(null), 600);
+        // Show time delta animation
+        setTimeDelta(bonus);
+        setTimeout(() => setTimeDelta(null), 600);
 
         // Show points earned animation
         setPointsEarned(points);
@@ -129,9 +128,9 @@ function SpeedStack() {
         if (timerStarted) {
           timer.subtractTime(TIME_PENALTY);
 
-          // Show penalty animation
-          setTimePenalty(TIME_PENALTY);
-          setTimeout(() => setTimePenalty(null), 600);
+          // Show time delta animation (negative)
+          setTimeDelta(-TIME_PENALTY);
+          setTimeout(() => setTimeDelta(null), 600);
         }
 
         setFeedback('incorrect');
@@ -270,6 +269,7 @@ function SpeedStack() {
           currentSize={gameState.currentSize}
           score={gameState.score}
           pointsEarned={pointsEarned}
+          timeDelta={timeDelta}
           getTimerColor={getTimerColor}
         />
       </div>
@@ -286,8 +286,6 @@ function SpeedStack() {
       <div className={`game-ui ${gameState.isGameOver ? 'hidden' : ''}`}>
         <div className={`game-transition-container ${isTransitioning ? 'transitioning' : ''}`}>
           <div className="game-container">
-            {timeBonus !== null && <div className="time-bonus-popup">+{timeBonus}s</div>}
-            {timePenalty !== null && <div className="time-penalty-popup">-{timePenalty}s</div>}
             <GameBoard
               userBoard={puzzle.userBoard}
               puzzle={puzzle.puzzle}

@@ -136,11 +136,35 @@ html {
   z-index: 10;
 }
 
+.timer-container {
+  position: relative;
+  justify-self: center;
+}
+
 .timer {
   color: var(--color-text-primary);
   font-size: var(--font-size-lg);
   font-weight: var(--font-weight-medium);
-  justify-self: center;
+}
+
+.time-delta-popup {
+  position: absolute;
+  top: -0.5rem;
+  right: -2rem;
+  color: var(--color-text-primary);
+  font-weight: var(--font-weight-bold);
+  font-size: var(--font-size-sm);
+  pointer-events: none;
+  animation: fadeUpSmall 600ms ease-out forwards;
+  opacity: 1;
+}
+
+.time-delta-popup.positive {
+  color: var(--color-text-primary);
+}
+
+.time-delta-popup.negative {
+  color: var(--color-text-primary);
 }
 
 .game-title {
