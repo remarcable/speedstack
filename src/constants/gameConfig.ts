@@ -1,11 +1,11 @@
 import type { GridSize } from '../utils/genericSudoku';
 
 // Timer Configuration
-export const INITIAL_TIME = 10;
+export const INITIAL_TIME = 5;
 export const TIME_PENALTY = 5;
 
 // Scoring Configuration
-export const POINTS_PER_SIZE_MULTIPLIER = 10;
+export const POINTS_PER_SIZE_MULTIPLIER = 8;
 
 /**
  * Calculate time bonus based on puzzle size
