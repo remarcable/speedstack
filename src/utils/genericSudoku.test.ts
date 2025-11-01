@@ -204,6 +204,54 @@ describe('genericSudoku', () => {
         });
       });
     });
+
+    it('should respect difficulty parameter (0 = easiest)', () => {
+      // Test with a larger grid size for more meaningful results
+      const size: GridSize = 9;
+      const { puzzle } = generatePuzzle(size, 0); // Easiest
+
+      let emptyCells = 0;
+      puzzle.forEach(row => {
+        row.forEach(cell => {
+          if (cell === 0) emptyCells++;
+        });
+      });
+
+      // With difficulty 0, we should get min empty cells (40 for size 9)
+      expect(emptyCells).toBe(40);
+    });
+
+    it('should respect difficulty parameter (1 = hardest)', () => {
+      // Test with a larger grid size for more meaningful results
+      const size: GridSize = 9;
+      const { puzzle } = generatePuzzle(size, 1); // Hardest
+
+      let emptyCells = 0;
+      puzzle.forEach(row => {
+        row.forEach(cell => {
+          if (cell === 0) emptyCells++;
+        });
+      });
+
+      // With difficulty 1, we should get max empty cells (45 for size 9)
+      expect(emptyCells).toBe(45);
+    });
+
+    it('should respect difficulty parameter (0.5 = medium)', () => {
+      const size: GridSize = 9;
+      const { puzzle } = generatePuzzle(size, 0.5); // Medium
+
+      let emptyCells = 0;
+      puzzle.forEach(row => {
+        row.forEach(cell => {
+          if (cell === 0) emptyCells++;
+        });
+      });
+
+      // With difficulty 0.5, we should get mid-range empty cells
+      // For size 9: min=40, max=45, mid=42.5, rounded=43
+      expect(emptyCells).toBe(43);
+    });
   });
 
   describe('isValidBoard', () => {

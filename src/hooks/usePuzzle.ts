@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react';
 import { generatePuzzle, isBoardComplete, type GridSize, type Board } from '../utils/genericSudoku';
-import { NEW_PUZZLE_ANIMATION_DURATION } from '../constants/gameConfig';
+import { NEW_PUZZLE_ANIMATION_DURATION, getPuzzleDifficulty } from '../constants/gameConfig';
 
 interface UsePuzzleReturn {
   puzzle: Board;
@@ -15,7 +15,7 @@ interface UsePuzzleReturn {
   updateUserBoard: (board: Board) => void;
   checkIfComplete: () => boolean;
   checkIfCorrect: () => boolean;
-  generateNewPuzzle: (size: GridSize) => void;
+  generateNewPuzzle: (size: GridSize, completedCount: number) => void;
   getPuzzleElapsedTime: () => number;
 }
 
@@ -28,8 +28,9 @@ export function usePuzzle(): UsePuzzleReturn {
   const [isNewPuzzle, setIsNewPuzzle] = useState(false);
   const [puzzleStartTime, setPuzzleStartTime] = useState<number>(() => Date.now());
 
-  const generateNewPuzzleCallback = useCallback((size: GridSize) => {
-    const { puzzle: newPuzzle, solution: newSolution } = generatePuzzle(size);
+  const generateNewPuzzleCallback = useCallback((size: GridSize, completedCount: number) => {
+    const difficulty = getPuzzleDifficulty(completedCount, size);
+    const { puzzle: newPuzzle, solution: newSolution } = generatePuzzle(size, difficulty);
     setPuzzle(newPuzzle);
     setSolution(newSolution);
     setUserBoard(newPuzzle.map(row => [...row]));

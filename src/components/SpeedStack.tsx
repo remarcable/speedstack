@@ -175,7 +175,7 @@ function SpeedStack() {
 
   // Generate puzzle on mount and whenever size changes
   useEffect(() => {
-    puzzle.generateNewPuzzle(gameState.currentSize);
+    puzzle.generateNewPuzzle(gameState.currentSize, gameState.completedCount);
     // Clear DOM focus and state when new puzzle appears
     blurCellElement();
     setFocusedCell(null);

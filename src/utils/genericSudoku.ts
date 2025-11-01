@@ -144,15 +144,30 @@ export function generateCompleteBoard(size: GridSize): Board {
 /**
  * Generate a sudoku puzzle by removing numbers from a complete board
  * @param size Grid size (1-9)
+ * @param difficulty Difficulty level from 0 (easiest) to 1 (hardest). Default: random
  */
-export function generatePuzzle(size: GridSize): { puzzle: Board; solution: Board } {
+export function generatePuzzle(
+  size: GridSize,
+  difficulty?: number
+): { puzzle: Board; solution: Board } {
   const solution = generateCompleteBoard(size);
   const puzzle = copyBoard(solution);
 
   const difficultyConfig = DIFFICULTY_MAP[size];
-  const cellsToRemove =
-    Math.floor(Math.random() * (difficultyConfig.max - difficultyConfig.min + 1)) +
-    difficultyConfig.min;
+  let cellsToRemove: number;
+
+  if (difficulty !== undefined) {
+    // Clamp difficulty to 0-1 range
+    const clampedDifficulty = Math.max(0, Math.min(1, difficulty));
+    // Interpolate between min and max based on difficulty
+    const range = difficultyConfig.max - difficultyConfig.min;
+    cellsToRemove = Math.round(difficultyConfig.min + range * clampedDifficulty);
+  } else {
+    // Random difficulty (original behavior)
+    cellsToRemove =
+      Math.floor(Math.random() * (difficultyConfig.max - difficultyConfig.min + 1)) +
+      difficultyConfig.min;
+  }
 
   const positions: [number, number][] = [];
 

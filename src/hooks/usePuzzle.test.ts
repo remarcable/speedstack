@@ -22,7 +22,7 @@ describe('usePuzzle', () => {
     const { result } = renderHook(() => usePuzzle());
 
     act(() => {
-      result.current.generateNewPuzzle(2);
+      result.current.generateNewPuzzle(2, 1);
     });
 
     expect(result.current.puzzle.length).toBe(2);
@@ -74,7 +74,7 @@ describe('usePuzzle', () => {
     const { result } = renderHook(() => usePuzzle());
 
     act(() => {
-      result.current.generateNewPuzzle(2);
+      result.current.generateNewPuzzle(2, 1);
     });
 
     const newBoard = [
@@ -93,7 +93,7 @@ describe('usePuzzle', () => {
     const { result } = renderHook(() => usePuzzle());
 
     act(() => {
-      result.current.generateNewPuzzle(1);
+      result.current.generateNewPuzzle(1, 0);
     });
 
     // Initially not complete (has empty cells)
@@ -111,7 +111,7 @@ describe('usePuzzle', () => {
     const { result } = renderHook(() => usePuzzle());
 
     act(() => {
-      result.current.generateNewPuzzle(2);
+      result.current.generateNewPuzzle(2, 1);
     });
 
     // Copy the solution to user board (correct answer)

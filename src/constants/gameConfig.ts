@@ -37,17 +37,60 @@ export const NEW_PUZZLE_ANIMATION_DURATION = 800;
 export const FEEDBACK_ANIMATION_DURATION = 500;
 
 /**
+ * Level progression configuration
+ * Defines how many puzzles to complete for each grid size
+ */
+const LEVEL_PROGRESSION: Record<GridSize, number> = {
+  1: 1,
+  2: 2,
+  3: 3,
+  4: 3,
+  5: 2,
+  6: 2,
+  7: 2,
+  8: 2,
+  9: 2,
+};
+
+/**
  * Get the next grid size based on the number of completed puzzles
- * Progression: 1 of 1x1, 2 of 2x2, 3 of 3x3, then 3 of each size after
+ * Uses LEVEL_PROGRESSION to determine when to advance to the next size
  */
 export function getNextSize(completed: number): GridSize {
-  if (completed < 1) return 1;
-  if (completed < 3) return 2;
-  if (completed < 6) return 3;
-  if (completed < 8) return 4;
-  if (completed < 10) return 5;
-  if (completed < 12) return 6;
-  if (completed < 14) return 7;
-  if (completed < 16) return 8;
-  return 9;
+  let cumulativeCount = 0;
+
+  for (const size of [1, 2, 3, 4, 5, 6, 7, 8, 9] as const) {
+    cumulativeCount += LEVEL_PROGRESSION[size];
+    if (completed < cumulativeCount) {
+      return size;
+    }
+  }
+
+  return 9; // Max size
+}
+
+/**
+ * Get the puzzle difficulty based on completed count and current size
+ * Returns a value from 0 (easiest) to 1 (hardest)
+ * Within each size, difficulty increases with each puzzle
+ */
+export function getPuzzleDifficulty(completed: number, currentSize: GridSize): number {
+  // Calculate the starting index for this size
+  let startIndex = 0;
+  for (const size of [1, 2, 3, 4, 5, 6, 7, 8, 9] as const) {
+    if (size === currentSize) break;
+    startIndex += LEVEL_PROGRESSION[size];
+  }
+
+  // Calculate which puzzle of this size we're on (0-indexed)
+  const puzzleIndex = completed - startIndex;
+  const puzzlesPerSize = LEVEL_PROGRESSION[currentSize];
+
+  // Calculate difficulty: 0 for first puzzle, increasing to 1 for last puzzle
+  // If only 1 puzzle, use 0.5 (medium difficulty)
+  if (puzzlesPerSize === 1) {
+    return 0.5;
+  }
+
+  return puzzleIndex / (puzzlesPerSize - 1);
 }
