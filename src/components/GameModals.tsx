@@ -11,6 +11,7 @@ interface GameModalsProps {
   totalPenalties: number;
   playTime: number;
   leaderboard: LeaderboardEntry[];
+  lastSavedId: string | null;
   onStart: () => void;
   onRestart: () => void;
 }
@@ -41,18 +42,10 @@ export function GameModals({
   score,
   currentSize,
   completedCount,
-  playTime,
   leaderboard,
+  lastSavedId,
   onRestart,
 }: GameModalsProps) {
-  // Check if current score is in leaderboard
-  const currentScoreRank =
-    leaderboard.findIndex(
-      entry =>
-        entry.score === score &&
-        entry.completedCount === completedCount &&
-        entry.playTime === playTime
-    ) + 1;
   return (
     <>
       <Modal
@@ -88,20 +81,20 @@ export function GameModals({
                 </tr>
               </thead>
               <tbody>
-                {leaderboard.map((entry, index) => (
-                  <tr
-                    key={`${entry.date}-${index}`}
-                    className={index + 1 === currentScoreRank ? 'current-score' : ''}
-                  >
-                    <td>{index + 1}</td>
-                    <td>{entry.score}</td>
-                    <td>
-                      {entry.completedCount} ({entry.maxLevel}×{entry.maxLevel})
-                    </td>
-                    <td>{formatTime(entry.playTime)}</td>
-                    <td>{formatDate(entry.date)}</td>
-                  </tr>
-                ))}
+                {leaderboard.map((entry, index) => {
+                  const entryId = entry.id ?? `${entry.date}-${index}`;
+                  return (
+                    <tr key={entryId} className={entry.id === lastSavedId ? 'current-score' : ''}>
+                      <td>{index + 1}</td>
+                      <td>{entry.score}</td>
+                      <td>
+                        {entry.completedCount} ({entry.maxLevel}×{entry.maxLevel})
+                      </td>
+                      <td>{formatTime(entry.playTime)}</td>
+                      <td>{formatDate(entry.date)}</td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>

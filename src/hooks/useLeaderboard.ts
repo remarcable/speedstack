@@ -11,16 +11,19 @@ export interface LeaderboardEntry {
   penalties: number;
   playTime: number;
   date: string;
+  id?: string; // Unique identifier for the entry
 }
 
 interface UseLeaderboardReturn {
   leaderboard: LeaderboardEntry[];
-  saveScore: (entry: Omit<LeaderboardEntry, 'date'>) => boolean;
+  saveScore: (entry: Omit<LeaderboardEntry, 'date' | 'id'>) => string | null;
   checkIfHighScore: (score: number) => boolean;
+  lastSavedId: string | null;
 }
 
 export function useLeaderboard(): UseLeaderboardReturn {
   const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([]);
+  const [lastSavedId, setLastSavedId] = useState<string | null>(null);
 
   // Load leaderboard from localStorage on mount
   useEffect(() => {
@@ -42,15 +45,17 @@ export function useLeaderboard(): UseLeaderboardReturn {
   }, []);
 
   // Save score to leaderboard
-  const saveScore = (entry: Omit<LeaderboardEntry, 'date'>): boolean => {
+  const saveScore = (entry: Omit<LeaderboardEntry, 'date' | 'id'>): string | null => {
+    const id = `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
     const newEntry: LeaderboardEntry = {
       ...entry,
       date: new Date().toISOString(),
+      id,
     };
 
     // Check if score qualifies
     if (leaderboard.length >= MAX_ENTRIES && newEntry.score <= leaderboard[MAX_ENTRIES - 1].score) {
-      return false;
+      return null;
     }
 
     // Add new entry, sort by score (descending), keep top 5
@@ -59,13 +64,14 @@ export function useLeaderboard(): UseLeaderboardReturn {
       .slice(0, MAX_ENTRIES);
 
     setLeaderboard(updatedLeaderboard);
+    setLastSavedId(id);
 
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedLeaderboard));
-      return true;
+      return id;
     } catch (error) {
       console.error('Failed to save leaderboard:', error);
-      return false;
+      return null;
     }
   };
 
@@ -81,5 +87,6 @@ export function useLeaderboard(): UseLeaderboardReturn {
     leaderboard,
     saveScore,
     checkIfHighScore,
+    lastSavedId,
   };
 }

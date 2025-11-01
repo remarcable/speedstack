@@ -22,7 +22,7 @@ interface UseGameStateReturn {
 
 export function useGameState(): UseGameStateReturn {
   const [hasStarted, setHasStarted] = useState(true);
-  const [currentSize, setCurrentSize] = useState<GridSize>(1);
+  const [currentSize, setCurrentSize] = useState<GridSize>(2);
   const [score, setScore] = useState(0);
   const [completedCount, setCompletedCount] = useState(0);
   const [isGameOver, setIsGameOver] = useState(false);

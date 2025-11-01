@@ -466,6 +466,7 @@ function SpeedStack() {
         totalPenalties={gameState.totalPenalties}
         playTime={gameState.getPlayTime()}
         leaderboard={leaderboard.leaderboard}
+        lastSavedId={leaderboard.lastSavedId}
         onStart={handleStartGame}
         onRestart={handleRestart}
       />
