@@ -86,6 +86,7 @@ function SpeedStack() {
         puzzle.setSelectedCell(null);
         puzzle.setSelectedNumber(null);
         setFocusedCell(null);
+        blurCellElement();
 
         // Fade out transition and progress to next level
         uiFeedback.triggerTransition(200, () => {

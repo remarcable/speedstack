@@ -91,7 +91,7 @@ export function parseNumberKey(key: string, maxNumber: number): number | null {
  */
 export function focusCellElement(): void {
   setTimeout(() => {
-    const cellElement = document.querySelector(`.cell[tabindex="0"]`) as HTMLElement;
+    const cellElement = document.querySelector(`[role="gridcell"][tabindex="0"]`) as HTMLElement;
     cellElement?.focus();
   }, 0);
 }
@@ -101,7 +101,7 @@ export function focusCellElement(): void {
  */
 export function blurCellElement(): void {
   const activeElement = document.activeElement as HTMLElement;
-  if (activeElement && activeElement.classList.contains('cell')) {
+  if (activeElement && activeElement.getAttribute('role') === 'gridcell') {
     activeElement.blur();
   }
 }
