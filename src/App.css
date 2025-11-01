@@ -49,6 +49,7 @@ button {
   --color-border: var(--color-gray-medium);
   --color-border-light: var(--color-gray-light);
   --color-accent: var(--color-black);
+  --color-accent-muted: #a5a5a5;
   --color-accent-hover: #2a2a2a;
   --color-accent-active: #0a0a0a;
 
@@ -118,6 +119,7 @@ button {
     --color-border: var(--color-gray-medium);
     --color-border-light: var(--color-gray-light);
     --color-accent: var(--color-black);
+    --color-accent-muted: #888888;
     --color-accent-hover: #d0d0d0;
     --color-accent-active: #ffffff;
 
