@@ -456,7 +456,7 @@ function SpeedStack() {
 
   return (
     <div className="speed-stack">
-      <div className={`game-ui ${timerStarted ? '' : 'hidden'}`}>
+      <div className={`game-ui ${timerStarted && !gameState.isGameOver ? '' : 'hidden'}`}>
         <GameHeader
           timeRemaining={timer.timeRemaining}
           currentSize={gameState.currentSize}
