@@ -495,7 +495,7 @@ button {
   bottom: 0;
   background-color: var(--color-bg-secondary);
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
   z-index: 1000;
   animation: fadeIn var(--transition-medium);
@@ -579,6 +579,7 @@ button {
 
 .leaderboard-section {
   margin-top: var(--spacing-xl);
+  overflow-x: scroll;
 }
 
 .leaderboard-section h3 {
@@ -655,7 +656,11 @@ button {
 }
 
 .restart-button:active {
-  background: var(--color-accent-active);
+  border-color: var(--color-accent-active);
+}
+
+.restart-button:focus {
+  outline: none;
   border-color: var(--color-accent-active);
 }
 
@@ -742,11 +747,11 @@ button {
   }
 
   .game-over-modal {
-    padding: var(--spacing-xl);
-    margin: var(--spacing-md);
+    padding: var(--spacing-lg);
   }
 
-  .game-over-modal h2 {
-    font-size: var(--font-size-3xl);
+  .game-over-modal .game-stats {
+    margin-left: calc(var(--spacing-lg) * -1);
+    margin-right: calc(var(--spacing-lg) * -1);
   }
 }
