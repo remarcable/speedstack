@@ -1,0 +1,132 @@
+.gameBoard {
+  background-color: var(--color-bg-primary);
+  padding: clamp(0.5rem, 2vw, var(--spacing-md));
+  border-radius: var(--radius-sm);
+  border: var(--border-width) solid var(--color-border-light);
+  margin-bottom: clamp(0.75rem, 3vw, var(--spacing-lg));
+  transition: transform var(--transition-medium);
+  width: fit-content;
+  max-width: 95vw;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.gameBoard.correct {
+  animation: flashGreen 0.3s ease;
+}
+
+.gameBoard.incorrect {
+  animation: shake 0.5s ease;
+}
+
+.gameBoard.newPuzzle {
+  animation: newPuzzleAppear 0.8s ease;
+}
+
+@keyframes flashGreen {
+  0%,
+  100% {
+    background-color: var(--color-bg-primary);
+  }
+  50% {
+    background-color: var(--color-bg-tertiary);
+  }
+}
+
+@keyframes shake {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  10%,
+  30%,
+  50%,
+  70%,
+  90% {
+    transform: translateX(-5px);
+  }
+  20%,
+  40%,
+  60%,
+  80% {
+    transform: translateX(5px);
+  }
+}
+
+@keyframes newPuzzleAppear {
+  0% {
+    transform: scale(0.98);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.boardRow {
+  display: flex;
+}
+
+.cell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-top: var(--border-width) solid var(--color-border);
+  border-left: var(--border-width) solid var(--color-border);
+  cursor: pointer;
+  font-weight: var(--font-weight-normal);
+  color: var(--color-text-primary);
+  transition: all var(--transition-fast);
+  user-select: none;
+  /* CSS containment for better rendering performance */
+  contain: layout style paint;
+  /* All cells are the same size regardless of grid */
+  /* Use clamp to fill viewport width but max out at 60px */
+  width: clamp(35px, 18vw, 60px);
+  height: clamp(35px, 18vw, 60px);
+  font-size: clamp(18px, 9vw, 30px);
+}
+
+.boardRow:last-child .cell {
+  border-bottom: var(--border-width) solid var(--color-border);
+}
+
+.cell:last-child {
+  border-right: var(--border-width) solid var(--color-border);
+}
+
+.cell:hover:not(.clue) {
+  background-color: var(--color-bg-hover);
+}
+
+.cell.clue {
+  background-color: var(--color-bg-secondary);
+  color: var(--color-text-primary);
+  cursor: default;
+  font-weight: var(--font-weight-bold);
+}
+
+.cell.selected {
+  background-color: var(--color-bg-tertiary);
+  box-shadow: inset 0 0 0 var(--border-width-thick) var(--color-accent);
+}
+
+.cell:focus {
+  outline: none;
+  background-color: var(--color-bg-tertiary);
+  box-shadow: inset 0 0 0 var(--border-width) var(--color-accent);
+}
+
+.cell.clue:focus {
+  background-color: var(--color-bg-tertiary);
+  box-shadow: none;
+}
+
+.cell.thickRight {
+  border-right: var(--border-width-subdivision) solid var(--color-border);
+}
+
+.cell.thickBottom {
+  border-bottom: var(--border-width-subdivision) solid var(--color-border);
+}

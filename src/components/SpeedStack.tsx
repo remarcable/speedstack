@@ -19,7 +19,7 @@ import { GameBoard } from './GameBoard';
 import { NumberPad } from './NumberPad';
 import { GameModals } from './GameModals';
 import { Tooltip } from './Tooltip';
-import '../SpeedStack.css';
+import styles from './SpeedStack.module.css';
 
 function SpeedStack() {
   const [timerStarted, setTimerStarted] = useState(false);
@@ -192,8 +192,10 @@ function SpeedStack() {
   };
 
   return (
-    <div className="speed-stack">
-      <div className={`game-ui ${timerStarted && !gameState.isGameOver ? '' : 'hidden'}`}>
+    <div className={styles.speedStack}>
+      <div
+        className={`${styles.gameUi} ${timerStarted && !gameState.isGameOver ? '' : styles.hidden}`}
+      >
         <GameHeader
           timeRemaining={timer.timeRemaining}
           currentSize={gameState.currentSize}
@@ -219,11 +221,11 @@ function SpeedStack() {
         onStart={handleStartGame}
         onRestart={handleRestart}
       />
-      <div className={`game-ui ${gameState.isGameOver ? 'hidden' : ''}`}>
+      <div className={`${styles.gameUi} ${gameState.isGameOver ? styles.hidden : ''}`}>
         <div
-          className={`game-transition-container ${uiFeedback.isTransitioning ? 'transitioning' : ''}`}
+          className={`${styles.gameTransitionContainer} ${uiFeedback.isTransitioning ? styles.transitioning : ''}`}
         >
-          <div className="game-container">
+          <div className={styles.gameContainer}>
             <GameBoard
               userBoard={puzzle.userBoard}
               puzzle={puzzle.puzzle}

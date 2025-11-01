@@ -1,0 +1,44 @@
+.speedStack {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(0.5rem, 2vw, var(--spacing-xl));
+  min-height: 100vh;
+  background: var(--color-bg-secondary);
+}
+
+.gameUi {
+  position: relative;
+  opacity: 1;
+  transition: opacity var(--transition-slow);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+.gameUi.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.gameTransitionContainer {
+  opacity: 1;
+  transition: opacity 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  position: relative;
+}
+
+.gameTransitionContainer.transitioning {
+  opacity: 0;
+}
+
+.gameContainer {
+  position: relative;
+  display: flex;
+  justify-content: center;
+}

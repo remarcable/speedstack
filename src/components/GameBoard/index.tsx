@@ -1,5 +1,6 @@
-import type { Board, GridSize } from '../utils/genericSudoku';
-import { BOX_CONFIG } from '../utils/genericSudoku';
+import type { Board, GridSize } from '../../utils/genericSudoku';
+import { BOX_CONFIG } from '../../utils/genericSudoku';
+import styles from './GameBoard.module.css';
 
 interface GameBoardProps {
   userBoard: Board;
@@ -26,7 +27,7 @@ export function GameBoard({
 
   // Return empty board if no valid grid size
   if (!gridSize || gridSize < 1 || gridSize > 9) {
-    return <div className="game-board" />;
+    return <div className={styles.gameBoard} />;
   }
 
   const boxConfig = BOX_CONFIG[gridSize];
@@ -38,11 +39,11 @@ export function GameBoard({
 
   return (
     <div
-      className={`game-board ${feedback || ''} ${isNewPuzzle ? 'new-puzzle' : ''}`}
+      className={`${styles.gameBoard} ${feedback ? styles[feedback] : ''} ${isNewPuzzle ? styles.newPuzzle : ''}`}
       data-grid-size={gridSize}
     >
       {userBoard.map((row, rowIndex) => (
-        <div key={rowIndex} className="board-row">
+        <div key={rowIndex} className={styles.boardRow}>
           {row.map((cell, colIndex) => {
             const isInitialClue = puzzle[rowIndex][colIndex] !== 0;
             const isSelected =
@@ -57,11 +58,11 @@ export function GameBoard({
               hasBoxSubdivisions && !isLastRow(rowIndex) && (rowIndex + 1) % boxConfig.rows === 0;
 
             const classes = [
-              'cell',
-              isInitialClue ? 'clue' : '',
-              isSelected ? 'selected' : '',
-              hasThickRightBorder ? 'thick-right' : '',
-              hasThickBottomBorder ? 'thick-bottom' : '',
+              styles.cell,
+              isInitialClue ? styles.clue : '',
+              isSelected ? styles.selected : '',
+              hasThickRightBorder ? styles.thickRight : '',
+              hasThickBottomBorder ? styles.thickBottom : '',
             ]
               .filter(Boolean)
               .join(' ');

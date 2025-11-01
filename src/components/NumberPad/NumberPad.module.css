@@ -1,0 +1,45 @@
+.numberButtons {
+  display: flex;
+  gap: var(--spacing-xs);
+  flex-wrap: wrap;
+  justify-content: center;
+  max-width: 95vw;
+}
+
+.numberButton {
+  width: 50px;
+  height: 50px;
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-normal);
+  background: var(--color-bg-primary);
+  color: var(--color-text-primary);
+  border: var(--border-width) solid var(--color-border);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  /* CSS containment for better rendering performance */
+  contain: layout style paint;
+}
+
+.numberButton:hover {
+  background-color: var(--color-bg-hover);
+}
+
+.numberButton:active {
+  background-color: var(--color-bg-tertiary);
+}
+
+.numberButton.selected {
+  background: var(--color-accent);
+  color: var(--color-bg-primary);
+  border-color: var(--color-accent);
+}
+
+/* Mobile responsiveness */
+@media (max-width: 640px) {
+  .numberButton {
+    width: 45px;
+    height: 45px;
+    font-size: var(--font-size-xl);
+  }
+}

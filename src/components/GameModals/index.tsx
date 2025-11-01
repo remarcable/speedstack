@@ -1,5 +1,6 @@
-import { Modal } from './Modal';
-import type { LeaderboardEntry } from '../hooks/useLeaderboard';
+import { Modal } from '../Modal';
+import type { LeaderboardEntry } from '../../hooks/useLeaderboard';
+import styles from './GameModals.module.css';
 
 interface GameModalsProps {
   hasStarted: boolean;
@@ -50,27 +51,27 @@ export function GameModals({
     <>
       <Modal
         isOpen={isGameOver}
-        overlayClassName="game-over-overlay"
-        contentClassName="game-over-modal"
+        overlayClassName={styles.gameOverOverlay}
+        contentClassName={styles.gameOverModal}
       >
         <h2>Speed Stack</h2>
-        <p className="subheading">
+        <p className={styles.subheading}>
           By <a href="https://marcnitzsche.de/about">Marc Nitzsche</a>
         </p>
-        <div className="game-stats">
-          <p className="final-level">{score} points</p>
-          <p className="final-score">
+        <div className={styles.gameStats}>
+          <p className={styles.finalLevel}>{score} points</p>
+          <p className={styles.finalScore}>
             Level {completedCount} ({currentSize}×{currentSize})
           </p>
 
-          <button className="restart-button" onClick={onRestart}>
+          <button className={styles.restartButton} onClick={onRestart}>
             Play Again
           </button>
         </div>
 
         {leaderboard.length > 0 && (
-          <div className="leaderboard-section">
-            <table className="leaderboard-table">
+          <div className={styles.leaderboardSection}>
+            <table className={styles.leaderboardTable}>
               <thead>
                 <tr>
                   <th>Rank</th>
@@ -84,7 +85,10 @@ export function GameModals({
                 {leaderboard.map((entry, index) => {
                   const entryId = entry.id ?? `${entry.date}-${index}`;
                   return (
-                    <tr key={entryId} className={entry.id === lastSavedId ? 'current-score' : ''}>
+                    <tr
+                      key={entryId}
+                      className={entry.id === lastSavedId ? styles.currentScore : ''}
+                    >
                       <td>{index + 1}</td>
                       <td>{entry.score}</td>
                       <td>
