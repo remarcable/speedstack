@@ -6,7 +6,7 @@ describe('useGameState', () => {
   it('initializes with default values', () => {
     const { result } = renderHook(() => useGameState());
 
-    expect(result.current.hasStarted).toBe(false);
+    expect(result.current.hasStarted).toBe(true); // Game starts immediately now
     expect(result.current.currentSize).toBe(1);
     expect(result.current.score).toBe(0);
     expect(result.current.completedCount).toBe(0);
@@ -66,7 +66,7 @@ describe('useGameState', () => {
       result.current.resetGame();
     });
 
-    expect(result.current.hasStarted).toBe(false);
+    expect(result.current.hasStarted).toBe(true); // Game starts immediately now
     expect(result.current.currentSize).toBe(1);
     expect(result.current.score).toBe(0);
     expect(result.current.completedCount).toBe(0);

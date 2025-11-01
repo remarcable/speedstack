@@ -7,6 +7,7 @@ import {
   getTimeBonus,
   calculateSpeedMultiplier,
 } from '../constants/gameConfig';
+import { calculateNextCell, type Direction } from '../utils/gridNavigation';
 import { useTimer } from '../hooks/useTimer';
 import { useGameState } from '../hooks/useGameState';
 import { usePuzzle } from '../hooks/usePuzzle';
@@ -25,6 +26,7 @@ function SpeedStack() {
   const [showTooltip, setShowTooltip] = useState(false);
   const [tooltipFadingOut, setTooltipFadingOut] = useState(false);
   const [isTransitioning, setIsTransitioning] = useState(false);
+  const [focusedCell, setFocusedCell] = useState<[number, number] | null>(null);
 
   // Custom hooks
   const gameState = useGameState();
@@ -113,6 +115,11 @@ function SpeedStack() {
         setPointsEarned(points);
         setTimeout(() => setPointsEarned(null), 600);
 
+        // Reset selections for new level
+        puzzle.setSelectedCell(null);
+        puzzle.setSelectedNumber(null);
+        setFocusedCell(null);
+
         // Fade out transition
         setIsTransitioning(true);
         setTimeout(() => {
@@ -168,9 +175,15 @@ function SpeedStack() {
 
   const handleCellClick = (row: number, col: number) => {
     if (!gameState.hasStarted || gameState.isGameOver) return;
-    if (puzzle.puzzle[row][col] !== 0) return; // Can't change initial clues
 
+    const isClue = puzzle.puzzle[row][col] !== 0;
     const currentValue = puzzle.userBoard[row][col];
+
+    // If it's a clue cell, just select it (but don't allow editing)
+    if (isClue) {
+      puzzle.setSelectedCell([row, col]);
+      return;
+    }
 
     // If a number is selected
     if (puzzle.selectedNumber !== null) {
@@ -196,6 +209,100 @@ function SpeedStack() {
 
     // Otherwise, just select the cell
     puzzle.setSelectedCell([row, col]);
+  };
+
+  const handleCellKeyDown = (row: number, col: number, e: React.KeyboardEvent) => {
+    if (!gameState.hasStarted || gameState.isGameOver) return;
+
+    const gridSize = gameState.currentSize;
+    const isClue = puzzle.puzzle[row][col] !== 0;
+
+    // Arrow key navigation (including WASD and vim hjkl)
+    const isUpKey = ['ArrowUp', 'w', 'W', 'k', 'K'].includes(e.key);
+    const isDownKey = ['ArrowDown', 's', 'S', 'j', 'J'].includes(e.key);
+    const isLeftKey = ['ArrowLeft', 'a', 'A', 'h', 'H'].includes(e.key);
+    const isRightKey = ['ArrowRight', 'd', 'D', 'l', 'L'].includes(e.key);
+
+    if (isUpKey || isDownKey || isLeftKey || isRightKey) {
+      e.preventDefault();
+
+      // Set focused cell when user first uses navigation keys
+      if (!focusedCell) {
+        setFocusedCell([row, col]);
+        return;
+      }
+
+      // Determine direction
+      let direction: Direction;
+      if (isUpKey) direction = 'up';
+      else if (isDownKey) direction = 'down';
+      else if (isLeftKey) direction = 'left';
+      else direction = 'right';
+
+      // Use navigation algorithm to find next cell
+      const result = calculateNextCell({
+        currentRow: row,
+        currentCol: col,
+        gridSize,
+        direction,
+      });
+
+      if (!result.moved) {
+        return;
+      }
+
+      setFocusedCell([result.row, result.col]);
+      // Focus the cell element
+      setTimeout(() => {
+        const cellElement = document.querySelector(`.cell[tabindex="0"]`) as HTMLElement;
+        cellElement?.focus();
+      }, 0);
+      return;
+    }
+
+    // Enter or Space to select/interact with cell
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      handleCellClick(row, col);
+      return;
+    }
+
+    // Escape to deselect
+    if (e.key === 'Escape') {
+      e.preventDefault();
+      puzzle.setSelectedCell(null);
+      puzzle.setSelectedNumber(null);
+      return;
+    }
+
+    // Prevent editing clue cells with number keys or delete
+    if (isClue) {
+      return;
+    }
+
+    // Number keys to fill cell
+    const num = parseInt(e.key);
+    if (!isNaN(num) && num >= 1 && num <= gridSize) {
+      e.preventDefault();
+      const currentValue = puzzle.userBoard[row][col];
+
+      // If pressing the same number as current value, clear it
+      if (currentValue === num) {
+        clearCell(row, col);
+      } else {
+        fillCell(row, col, num);
+      }
+      return;
+    }
+
+    // Delete/Backspace to clear cell
+    if (e.key === 'Delete' || e.key === 'Backspace') {
+      e.preventDefault();
+      if (puzzle.userBoard[row][col] !== 0) {
+        clearCell(row, col);
+      }
+      return;
+    }
   };
 
   const handleStartGame = () => {
@@ -230,6 +337,59 @@ function SpeedStack() {
     const handleKeyPress = (e: KeyboardEvent) => {
       if (!gameState.hasStarted || gameState.isGameOver) return;
 
+      // Handle navigation keys when no cell is focused - focus the first non-clue cell
+      const isNavigationKey = [
+        'ArrowUp',
+        'ArrowDown',
+        'ArrowLeft',
+        'ArrowRight',
+        'w',
+        'W',
+        'a',
+        'A',
+        's',
+        'S',
+        'd',
+        'D',
+        'h',
+        'H',
+        'j',
+        'J',
+        'k',
+        'K',
+        'l',
+        'L',
+      ].includes(e.key);
+
+      if (isNavigationKey) {
+        e.preventDefault();
+
+        // If we have a focused cell, try to focus it (in case user clicked outside)
+        if (focusedCell) {
+          const [row, col] = focusedCell;
+          // Check if the focused cell is still valid (within bounds)
+          if (puzzle.puzzle[row] && puzzle.puzzle[row][col] !== undefined) {
+            setTimeout(() => {
+              const cellElement = document.querySelector(`.cell[tabindex="0"]`) as HTMLElement;
+              cellElement?.focus();
+            }, 0);
+            return;
+          }
+        }
+
+        // If no focused cell or it's invalid, find first cell (any cell, clue or not)
+        if (puzzle.puzzle.length > 0 && puzzle.puzzle[0].length > 0) {
+          setFocusedCell([0, 0]);
+          // Focus the cell element
+          setTimeout(() => {
+            const cellElement = document.querySelector(`.cell[tabindex="0"]`) as HTMLElement;
+            cellElement?.focus();
+          }, 0);
+          return;
+        }
+        return;
+      }
+
       // Handle number keys 1-9
       const num = parseInt(e.key);
       if (!isNaN(num) && num >= 1 && num <= gameState.currentSize) {
@@ -255,6 +415,7 @@ function SpeedStack() {
     puzzle.selectedCell,
     puzzle.puzzle,
     puzzle.userBoard,
+    focusedCell,
     handleNumberClick,
     clearCell,
   ]);
@@ -267,6 +428,7 @@ function SpeedStack() {
     setFeedback(null);
     setTimerStarted(false);
     setShowTooltip(false);
+    setFocusedCell(null);
     // Puzzle will be regenerated by the effect when currentSize resets to 1
   };
 
@@ -312,7 +474,9 @@ function SpeedStack() {
               selectedCell={puzzle.selectedCell}
               feedback={feedback}
               isNewPuzzle={puzzle.isNewPuzzle}
+              focusedCell={focusedCell}
               onCellClick={handleCellClick}
+              onCellKeyDown={handleCellKeyDown}
             />
           </div>
 

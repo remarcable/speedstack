@@ -444,6 +444,20 @@ button {
   box-shadow: inset 0 0 0 var(--border-width-thick) var(--color-accent);
 }
 
+.cell:focus {
+  outline: none;
+}
+
+.cell:focus-visible {
+  background-color: var(--color-bg-tertiary);
+  box-shadow: inset 0 0 0 var(--border-width) var(--color-accent);
+}
+
+.cell.clue:focus-visible {
+  background-color: var(--color-bg-tertiary);
+  box-shadow: none;
+}
+
 .cell.thick-right {
   border-right: var(--border-width-subdivision) solid var(--color-border);
 }

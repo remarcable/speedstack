@@ -7,7 +7,9 @@ interface GameBoardProps {
   selectedCell: [number, number] | null;
   feedback: 'correct' | 'incorrect' | null;
   isNewPuzzle: boolean;
+  focusedCell: [number, number] | null;
   onCellClick: (row: number, col: number) => void;
+  onCellKeyDown: (row: number, col: number, e: React.KeyboardEvent) => void;
 }
 
 export function GameBoard({
@@ -16,7 +18,9 @@ export function GameBoard({
   selectedCell,
   feedback,
   isNewPuzzle,
+  focusedCell,
   onCellClick,
+  onCellKeyDown,
 }: GameBoardProps) {
   const gridSize = userBoard.length as GridSize;
 
@@ -43,6 +47,8 @@ export function GameBoard({
             const isInitialClue = puzzle[rowIndex][colIndex] !== 0;
             const isSelected =
               selectedCell && selectedCell[0] === rowIndex && selectedCell[1] === colIndex;
+            const isFocused =
+              focusedCell && focusedCell[0] === rowIndex && focusedCell[1] === colIndex;
 
             // Add thick borders for subdivision boundaries (only if boxes are used)
             const hasThickRightBorder =
@@ -60,11 +66,19 @@ export function GameBoard({
               .filter(Boolean)
               .join(' ');
 
+            // Use roving tabindex: only the focused cell (or first cell if none focused) is in tab order
+            const isFirstCell = !focusedCell && rowIndex === 0 && colIndex === 0;
+            const tabIndex = isFocused || isFirstCell ? 0 : -1;
+
             return (
               <div
                 key={`${rowIndex}-${colIndex}`}
                 className={classes}
                 onClick={() => onCellClick(rowIndex, colIndex)}
+                onKeyDown={e => onCellKeyDown(rowIndex, colIndex, e)}
+                tabIndex={tabIndex}
+                role="gridcell"
+                aria-label={`Row ${rowIndex + 1}, Column ${colIndex + 1}${isInitialClue ? ', initial clue' : ''}`}
               >
                 {cell !== 0 ? cell : ''}
               </div>
