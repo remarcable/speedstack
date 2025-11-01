@@ -224,7 +224,13 @@ function SpeedStack() {
     const isRightKey = ['ArrowRight', 'd', 'D', 'l', 'L'].includes(e.key);
 
     if (isUpKey || isDownKey || isLeftKey || isRightKey) {
-      e.preventDefault();
+      // Only preventDefault if no modifiers (except Shift for jump mode) are pressed
+      if (!e.metaKey && !e.ctrlKey && !e.altKey) {
+        e.preventDefault();
+      } else {
+        // Allow browser shortcuts like Cmd+Arrow keys
+        return;
+      }
 
       // Set focused cell when user first uses navigation keys
       if (!focusedCell) {
@@ -366,7 +372,13 @@ function SpeedStack() {
       ].includes(e.key);
 
       if (isNavigationKey) {
-        e.preventDefault();
+        // Only preventDefault if no modifiers (except Shift for jump mode) are pressed
+        if (!e.metaKey && !e.ctrlKey && !e.altKey) {
+          e.preventDefault();
+        } else {
+          // Allow browser shortcuts like Cmd+Arrow keys
+          return;
+        }
 
         // If we have a focused cell, try to focus it (in case user clicked outside)
         if (focusedCell) {
