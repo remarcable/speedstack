@@ -2,6 +2,9 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  /* Disable blue tap highlight on mobile */
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
 }
 
 body,
@@ -296,6 +299,7 @@ button {
 .level-info,
 .score-info {
   position: relative;
+  text-wrap: nowrap;
 }
 
 .points-earned-popup {
@@ -410,6 +414,8 @@ button {
   color: var(--color-text-primary);
   transition: all var(--transition-fast);
   user-select: none;
+  /* CSS containment for better rendering performance */
+  contain: layout style paint;
 }
 
 /* All cells are the same size regardless of grid */
@@ -485,6 +491,8 @@ button {
   border-radius: var(--radius-sm);
   cursor: pointer;
   transition: all var(--transition-fast);
+  /* CSS containment for better rendering performance */
+  contain: layout style paint;
 }
 
 .number-button:hover {
@@ -748,8 +756,133 @@ button {
   }
 }
 
+/* Touch device optimizations - make interactions feel instant */
+@media (hover: none) and (pointer: coarse) {
+  /* Drastically faster transitions for touch devices */
+  :root {
+    --transition-fast: 50ms ease;
+    --transition-medium: 100ms ease;
+    --transition-slow: 150ms ease;
+  }
+
+  /* Instant feedback for number buttons */
+  .number-button {
+    transition: all 50ms ease;
+  }
+
+  /* Fast cell transitions */
+  .cell {
+    transition:
+      background-color 50ms ease,
+      box-shadow 50ms ease;
+  }
+
+  /* Faster board feedback animations */
+  .game-board.correct {
+    animation: flash-green 150ms ease;
+  }
+
+  .game-board.incorrect {
+    animation: shake 250ms ease;
+  }
+
+  .game-board.new-puzzle {
+    animation: new-puzzle-appear 300ms ease;
+  }
+
+  /* Faster floating animations */
+  .points-earned,
+  .time-delta {
+    animation: floatUp 300ms ease-out forwards;
+  }
+
+  /* Speed up modal animations */
+  .modal-content {
+    animation: fadeIn 150ms;
+  }
+
+  .game-over-modal,
+  .start-modal {
+    animation: slideUp 150ms;
+  }
+}
+
+/* Disable hover effects on touch devices - they cause visual lag */
+@media (hover: none) {
+  .cell:hover:not(.clue) {
+    background-color: transparent;
+  }
+
+  .number-button:hover {
+    background-color: transparent;
+  }
+
+  /* Keep selected state visible */
+  .number-button.selected {
+    background: var(--color-accent);
+    color: var(--color-bg-primary);
+  }
+
+  /* Active states are still important for touch feedback */
+  .cell:active:not(.clue) {
+    background-color: var(--color-bg-tertiary);
+  }
+
+  .number-button:active:not(.selected) {
+    background-color: var(--color-bg-tertiary);
+    transform: scale(0.95);
+  }
+}
+
+/* Respect user's motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
 /* Mobile responsiveness */
 @media (max-width: 640px) {
+  /* Mobile header layout: title centered, timer left, game info right */
+  .top-bar {
+    grid-template-columns: 1fr auto 1fr;
+    grid-template-rows: auto;
+    padding: var(--spacing-sm) var(--spacing-md);
+    gap: var(--spacing-xs);
+  }
+
+  .game-title {
+    display: none;
+  }
+
+  .timer-container {
+    grid-column: 1;
+    grid-row: 1;
+    justify-self: start;
+  }
+
+  .timer {
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-normal);
+  }
+
+  .game-info {
+    grid-column: 3;
+    grid-row: 1;
+    justify-self: end;
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-normal);
+  }
+
+  .level-info,
+  .score-info {
+    font-size: var(--font-size-sm);
+  }
+
   .stats {
     font-size: var(--font-size-xl);
   }
