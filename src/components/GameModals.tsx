@@ -59,13 +59,6 @@ export function GameModals({
     ) + 1;
   return (
     <>
-      <Modal isOpen={!hasStarted} overlayClassName="start-overlay" contentClassName="start-modal">
-        <h2>Speed Stack</h2>
-        <button className="start-button" onClick={onStart}>
-          Start Game
-        </button>
-      </Modal>
-
       <Modal
         isOpen={isGameOver}
         overlayClassName="game-over-overlay"
