@@ -95,3 +95,13 @@ export function focusCellElement(): void {
     cellElement?.focus();
   }, 0);
 }
+
+/**
+ * Blur any currently focused cell element
+ */
+export function blurCellElement(): void {
+  const activeElement = document.activeElement as HTMLElement;
+  if (activeElement && activeElement.classList.contains('cell')) {
+    activeElement.blur();
+  }
+}

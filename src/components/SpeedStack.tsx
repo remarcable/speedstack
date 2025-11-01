@@ -13,6 +13,7 @@ import { useLeaderboard } from '../hooks/useLeaderboard';
 import { useUIFeedback } from '../hooks/useUIFeedback';
 import { useCellInteraction } from '../hooks/useCellInteraction';
 import { useKeyboard } from '../hooks/useKeyboard';
+import { blurCellElement } from '../utils/keyboardHelpers';
 import { GameHeader } from './GameHeader';
 import { GameBoard } from './GameBoard';
 import { NumberPad } from './NumberPad';
@@ -167,6 +168,9 @@ function SpeedStack() {
   // Generate puzzle on mount and whenever size changes
   useEffect(() => {
     puzzle.generateNewPuzzle(gameState.currentSize);
+    // Clear DOM focus and state when new puzzle appears
+    blurCellElement();
+    setFocusedCell(null);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [gameState.currentSize, gameState.completedCount]);
 
