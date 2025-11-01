@@ -37,16 +37,12 @@ function formatDate(isoDate: string): string {
 }
 
 export function GameModals({
-  hasStarted,
   isGameOver,
   score,
   currentSize,
   completedCount,
-  totalBonuses,
-  totalPenalties,
   playTime,
   leaderboard,
-  onStart,
   onRestart,
 }: GameModalsProps) {
   // Check if current score is in leaderboard
@@ -64,22 +60,23 @@ export function GameModals({
         overlayClassName="game-over-overlay"
         contentClassName="game-over-modal"
       >
-        <h2>Game Over!</h2>
+        <h2>Speed Stack</h2>
+        <p className="subheading">
+          By <a href="https://marcnitzsche.de/about">Marc Nitzsche</a>
+        </p>
         <div className="game-stats">
           <p className="final-level">{score} points</p>
           <p className="final-score">
-            Level: {completedCount} ({currentSize}×{currentSize})
+            Level {completedCount} ({currentSize}×{currentSize})
           </p>
-          <p className="play-time">Time played: {formatTime(playTime)}</p>
-          <div className="bonus-penalty-stats">
-            <span className="bonuses">Bonuses: +{Math.round(totalBonuses * 10) / 10}s</span>
-            <span className="penalties">Penalties: -{Math.round(totalPenalties * 10) / 10}s</span>
-          </div>
+
+          <button className="restart-button" onClick={onRestart}>
+            Play Again
+          </button>
         </div>
 
         {leaderboard.length > 0 && (
           <div className="leaderboard-section">
-            <h3>Top 5 Scores</h3>
             <table className="leaderboard-table">
               <thead>
                 <tr>
@@ -109,10 +106,6 @@ export function GameModals({
             </table>
           </div>
         )}
-
-        <button className="restart-button" onClick={onRestart}>
-          Play Again
-        </button>
       </Modal>
     </>
   );
