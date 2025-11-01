@@ -590,6 +590,7 @@ html {
   width: 100%;
   max-width: 600px;
   border-radius: var(--radius-md);
+  border: var(--border-width) solid var(--color-border-light);
   animation: slideUp var(--transition-medium);
 }
 
