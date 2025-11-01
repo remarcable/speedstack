@@ -145,6 +145,146 @@ describe('gridNavigation', () => {
       });
     });
 
+    describe('jump navigation (Shift+key)', () => {
+      describe('vertical jumps', () => {
+        it('should jump to top row when moving up', () => {
+          const result = calculateNextCell({
+            currentRow: 5,
+            currentCol: 3,
+            gridSize: 9,
+            direction: 'up',
+            jump: true,
+          });
+          expect(result).toEqual({ row: 0, col: 3, moved: true });
+        });
+
+        it('should jump to bottom row when moving down', () => {
+          const result = calculateNextCell({
+            currentRow: 2,
+            currentCol: 1,
+            gridSize: 5,
+            direction: 'down',
+            jump: true,
+          });
+          expect(result).toEqual({ row: 4, col: 1, moved: true });
+        });
+
+        it('should not move when already at top and jumping up', () => {
+          const result = calculateNextCell({
+            currentRow: 0,
+            currentCol: 2,
+            gridSize: 4,
+            direction: 'up',
+            jump: true,
+          });
+          expect(result).toEqual({ row: 0, col: 2, moved: false });
+        });
+
+        it('should not move when already at bottom and jumping down', () => {
+          const result = calculateNextCell({
+            currentRow: 3,
+            currentCol: 1,
+            gridSize: 4,
+            direction: 'down',
+            jump: true,
+          });
+          expect(result).toEqual({ row: 3, col: 1, moved: false });
+        });
+      });
+
+      describe('horizontal jumps', () => {
+        it('should jump to leftmost column when moving left', () => {
+          const result = calculateNextCell({
+            currentRow: 2,
+            currentCol: 7,
+            gridSize: 9,
+            direction: 'left',
+            jump: true,
+          });
+          expect(result).toEqual({ row: 2, col: 0, moved: true });
+        });
+
+        it('should jump to rightmost column when moving right', () => {
+          const result = calculateNextCell({
+            currentRow: 1,
+            currentCol: 1,
+            gridSize: 5,
+            direction: 'right',
+            jump: true,
+          });
+          expect(result).toEqual({ row: 1, col: 4, moved: true });
+        });
+
+        it('should not move when already at left edge and jumping left', () => {
+          const result = calculateNextCell({
+            currentRow: 2,
+            currentCol: 0,
+            gridSize: 4,
+            direction: 'left',
+            jump: true,
+          });
+          expect(result).toEqual({ row: 2, col: 0, moved: false });
+        });
+
+        it('should not move when already at right edge and jumping right', () => {
+          const result = calculateNextCell({
+            currentRow: 1,
+            currentCol: 3,
+            gridSize: 4,
+            direction: 'right',
+            jump: true,
+          });
+          expect(result).toEqual({ row: 1, col: 3, moved: false });
+        });
+      });
+
+      describe('jump in small grids', () => {
+        it('should handle 1x1 grid jumps', () => {
+          expect(
+            calculateNextCell({
+              currentRow: 0,
+              currentCol: 0,
+              gridSize: 1,
+              direction: 'up',
+              jump: true,
+            })
+          ).toEqual({ row: 0, col: 0, moved: false });
+
+          expect(
+            calculateNextCell({
+              currentRow: 0,
+              currentCol: 0,
+              gridSize: 1,
+              direction: 'down',
+              jump: true,
+            })
+          ).toEqual({ row: 0, col: 0, moved: false });
+        });
+
+        it('should handle 2x2 grid jumps', () => {
+          expect(
+            calculateNextCell({
+              currentRow: 1,
+              currentCol: 0,
+              gridSize: 2,
+              direction: 'up',
+              jump: true,
+            })
+          ).toEqual({ row: 0, col: 0, moved: true });
+
+          expect(
+            calculateNextCell({
+              currentRow: 0,
+              currentCol: 1,
+              gridSize: 2,
+              direction: 'left',
+              jump: true,
+            })
+          ).toEqual({ row: 0, col: 0, moved: true });
+        });
+      });
+    });
+
     describe('invalid input handling', () => {
       it('should handle out of bounds current position', () => {
         const result = calculateNextCell({

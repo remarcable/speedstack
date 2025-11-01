@@ -239,12 +239,16 @@ function SpeedStack() {
       else if (isLeftKey) direction = 'left';
       else direction = 'right';
 
+      // Check if Shift is held for jump mode
+      const jump = e.shiftKey;
+
       // Use navigation algorithm to find next cell
       const result = calculateNextCell({
         currentRow: row,
         currentCol: col,
         gridSize,
         direction,
+        jump,
       });
 
       if (!result.moved) {
