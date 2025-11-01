@@ -323,8 +323,10 @@ function SpeedStack() {
           />
 
           {showTooltip && (
-            <div className={`instruction-tooltip ${tooltipFadingOut ? 'fading-out' : ''}`}>
-              Click the number, then click the box
+            <div className="tooltip-container">
+              <div className={`instruction-tooltip ${tooltipFadingOut ? 'fading-out' : ''}`}>
+                Click the number, then click the box
+              </div>
             </div>
           )}
         </div>
