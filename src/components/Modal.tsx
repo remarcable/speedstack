@@ -1,4 +1,4 @@
-import { ReactNode } from 'react';
+import { memo, ReactNode } from 'react';
 
 interface ModalProps {
   isOpen: boolean;
@@ -7,7 +7,12 @@ interface ModalProps {
   contentClassName?: string;
 }
 
-export function Modal({ isOpen, children, overlayClassName, contentClassName }: ModalProps) {
+export const Modal = memo(function Modal({
+  isOpen,
+  children,
+  overlayClassName,
+  contentClassName,
+}: ModalProps) {
   if (!isOpen) return null;
 
   return (
@@ -15,4 +20,4 @@ export function Modal({ isOpen, children, overlayClassName, contentClassName }: 
       <div className={contentClassName}>{children}</div>
     </div>
   );
-}
+});

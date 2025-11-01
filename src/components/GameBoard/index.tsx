@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import type { Board, GridSize } from '../../utils/genericSudoku';
 import { BOX_CONFIG } from '../../utils/genericSudoku';
 import styles from './GameBoard.module.css';
@@ -13,7 +14,7 @@ interface GameBoardProps {
   onCellKeyDown: (row: number, col: number, e: React.KeyboardEvent) => void;
 }
 
-export function GameBoard({
+export const GameBoard = memo(function GameBoard({
   userBoard,
   puzzle,
   selectedCell,
@@ -89,4 +90,4 @@ export function GameBoard({
       ))}
     </div>
   );
-}
+});

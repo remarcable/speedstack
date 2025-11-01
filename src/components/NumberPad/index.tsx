@@ -1,3 +1,4 @@
+import { memo, useMemo } from 'react';
 import styles from './NumberPad.module.css';
 
 interface NumberPadProps {
@@ -6,10 +7,16 @@ interface NumberPadProps {
   onNumberClick: (num: number) => void;
 }
 
-export function NumberPad({ gridSize, selectedNumber, onNumberClick }: NumberPadProps) {
+export const NumberPad = memo(function NumberPad({
+  gridSize,
+  selectedNumber,
+  onNumberClick,
+}: NumberPadProps) {
+  const numbers = useMemo(() => Array.from({ length: gridSize }, (_, i) => i + 1), [gridSize]);
+
   return (
     <div className={styles.numberButtons}>
-      {Array.from({ length: gridSize }, (_, i) => i + 1).map(num => (
+      {numbers.map(num => (
         <button
           key={num}
           className={`${styles.numberButton} ${selectedNumber === num ? styles.selected : ''}`}
@@ -20,4 +27,4 @@ export function NumberPad({ gridSize, selectedNumber, onNumberClick }: NumberPad
       ))}
     </div>
   );
-}
+});

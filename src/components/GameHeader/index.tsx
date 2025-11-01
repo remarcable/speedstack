@@ -7,7 +7,6 @@ interface GameHeaderProps {
   completedCount: number;
   pointsEarned: number | null;
   timeDelta: number | null;
-  getTimerColor: () => string;
 }
 
 export function GameHeader({
@@ -17,11 +16,15 @@ export function GameHeader({
   completedCount,
   pointsEarned,
   timeDelta,
-  getTimerColor,
 }: GameHeaderProps) {
-  // Map old class names to new CSS module names
-  const timerColorClass = getTimerColor().replace('timer-', 'timer');
-  const timerColorStyle = timerColorClass.charAt(5).toUpperCase() + timerColorClass.slice(6); // timerGreen, timerYellow, timerRed
+  // Calculate timer color based on time remaining
+  const getTimerColor = () => {
+    if (timeRemaining > 15) return 'timerGreen';
+    if (timeRemaining > 10) return 'timerYellow';
+    return 'timerRed';
+  };
+
+  const timerColorStyle = getTimerColor();
 
   return (
     <div className={styles.topBar}>

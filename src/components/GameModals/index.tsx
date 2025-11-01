@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import { Modal } from '../Modal';
 import type { LeaderboardEntry } from '../../hooks/useLeaderboard';
 import styles from './GameModals.module.css';
@@ -38,7 +39,7 @@ function formatDate(isoDate: string): string {
   }
 }
 
-export function GameModals({
+export const GameModals = memo(function GameModals({
   isGameOver,
   score,
   currentSize,
@@ -106,4 +107,4 @@ export function GameModals({
       </Modal>
     </>
   );
-}
+});
